@@ -23,6 +23,8 @@ public class BoardMove : MonoBehaviour
 
   public BoardingStates state = BoardingStates.Skate;
 
+  private bool isGrounded;
+
   void Start()
   {
     rb = GetComponent<Rigidbody>();
@@ -61,6 +63,8 @@ public class BoardMove : MonoBehaviour
   void FixedUpdate()
   {
 
+    isGrounded = IsInGround();
+
     if (state == BoardingStates.Break)
     {
       // On break state. Decrase speed and stop the board.
@@ -86,9 +90,12 @@ public class BoardMove : MonoBehaviour
       }
       else
       {
-        // If there is no slope, decrease speed.
-        speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
 
+        if (isGrounded)
+        {
+          // If there is no slope, decrease speed.
+          speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
+        }
         // Todo: Should check if board touching the ground. If it is, we should not lower speed.
       }
 
@@ -126,6 +133,23 @@ public class BoardMove : MonoBehaviour
 
       // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
       return angle < 20 ? false : true;
+    }
+
+    return false;
+  }
+
+  private bool IsInGround()
+  {
+
+    Vector3 size = GetComponent<BoxCollider>().bounds.size;
+    RaycastHit slopeHit;
+
+    if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, size.y * 0.5f + 0.2f))
+    {
+      if (slopeHit.collider != null)
+      {
+        return true;
+      }
     }
 
     return false;
