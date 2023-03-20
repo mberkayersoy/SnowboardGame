@@ -5,154 +5,201 @@ using DG.Tweening;
 
 public enum BoardingStates
 {
-  Skate,
-  Break,
+    Skate,
+    Break,
+    Jump,
 }
 
 public class BoardMove : MonoBehaviour
 {
-  private float minSpeed = 0f;
-  private float maxSpeed = 30f;
-  private float speed = 0f;
-  private float RotationUnit = 1f;
-  private Rigidbody rb;
-  private Vector3 slopeDirection;
+    private Vector3 m_surfaceNormal = new Vector3();
+    private Vector3 m_collisionPoint = new Vector3();
+    private Collision m_surfaceCollisionInfo;
+    private bool m_onSurface;
+    private float minSpeed = 0f;
+    private float maxSpeed = 30f;
+    private float speed = 0f;
+    private float RotationUnit = 1f;
+    public float jumpStrength = 5;
+    private Rigidbody rb;
+    private Vector3 slopeDirection;
 
-  private float yRotation = 0;
-  private Vector3 velocity;
+    private float yRotation = 0;
+    private Vector3 velocity;
 
-  public BoardingStates state = BoardingStates.Skate;
+    public BoardingStates state = BoardingStates.Skate;
 
-  private bool isGrounded;
+    GroundCheck groundCheck;
+    public float groundOffset = 0.1f;
+    private float characterHeight;  
 
-  void Start()
-  {
-    rb = GetComponent<Rigidbody>();
-  }
-
-
-  void Update()
-  {
-    // A/D Key: Board rotation
-    yRotation = Input.GetAxisRaw("Horizontal");
-
-
-    // Space Key: Increase speed. Mostly for debugging.
-    if (Input.GetKey(KeyCode.Space))
+    void Start()
     {
-      speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
+        rb = GetComponent<Rigidbody>();
+        groundCheck = GetComponentInChildren<GroundCheck>();
     }
 
-    // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
-    if (Input.GetKeyDown(KeyCode.LeftShift))
+    void Update()
     {
-      state = BoardingStates.Break;
-      transform.DOLocalRotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd);
-    }
-    // Left Shift (Up): Change State as Skate, rotate board as rotation before break.
-    else if (Input.GetKeyUp(KeyCode.LeftShift))
-    {
-      transform.DOLocalRotate(new Vector3(0, -90, 0), 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
-      {
-        state = BoardingStates.Skate;
-      });
-    }
-  }
-
-
-  void FixedUpdate()
-  {
-
-    isGrounded = IsInGround();
-
-    if (state == BoardingStates.Break)
-    {
-      // On break state. Decrase speed and stop the board.
-      speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
-    }
-    else
-    {
-      // Angular Velocity for left-right rotation.
-      rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
-
-
-      // Skating Physics
-      if (OnSlope())
-      {
-        // Angle Between direction of movement and slope.
-        float angle = Vector3.Angle(rb.rotation * (new Vector3(0, 0, 1)), slopeDirection);
-
-        // If direction of movement and slope are similar increase speed, otherwise decrease.
-        if (angle < 30 || angle > 330) speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
-        else if (angle < 45 || angle > 305) speed = Mathf.Clamp(speed + 0.05f, minSpeed, maxSpeed);
-        else if (angle > 45 && angle < 90) speed = Mathf.Clamp(speed - 0.05f, minSpeed, maxSpeed);
-        else if (angle > 90 && angle < 270) speed = Mathf.Clamp(speed - 0.2f, minSpeed, maxSpeed);
-      }
-      else
-      {
-
-        if (isGrounded)
+        Debug.Log("m_onSurface: " + m_onSurface);
+        if (m_onSurface)
         {
-          // If there is no slope, decrease speed.
-          speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
+            state = BoardingStates.Skate;
+            // A/D Key: Change Board direction
+            yRotation = Input.GetAxisRaw("Horizontal");
+            // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
+
+            Jump();
+            //if (Input.GetKeyDown(KeyCode.LeftShift))
+            //{
+            //    state = BoardingStates.Break;
+            //    //transform.DOLocalRotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd);
+            //    transform.DOLocalRotateQuaternion(Quaternion.Euler(0, 90, 0), 1f);
+            //}
+            //// Left Shift (Up): Change State as Skate, rotate board as rotation before break.
+            //else if (Input.GetKeyUp(KeyCode.LeftShift))
+            //{
+            //    transform.DOLocalRotate(new Vector3(0, -90, 0), 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
+            //    {
+            //        state = BoardingStates.Skate;
+            //    });
+            //}
+
+            // Space Key: Increase speed. Mostly for debugging.
+            if (Input.GetKey(KeyCode.Space))
+            {
+                speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
+            }
         }
-        // Todo: Should check if board touching the ground. If it is, we should not lower speed.
-      }
 
-
+        if (!m_onSurface)
+        {
+            state = BoardingStates.Jump;
+        }
     }
 
-    velocity = GetVelocity();
-    rb.velocity = velocity;
-  }
 
-  private Vector3 GetVelocity()
-  {
-    // Calculates velocity. Not modifies y axis, beacuse of default gravity.
-    Vector3 currentV = rb.velocity;
-    Vector3 newV = rb.rotation * (new Vector3(0, 0, 1) * speed);
-
-    newV.y = 0;
-    newV.y = currentV.y;
-
-    return newV;
-  }
-
-  private bool OnSlope()
-  {
-
-    Vector3 size = GetComponent<BoxCollider>().bounds.size;
-    RaycastHit slopeHit;
-
-    if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, size.y * 0.5f + 0.3f))
+    void FixedUpdate()
     {
-      // Project a ray from pivot of object in the -y direction.
-      // If it is hit to the surface, get slope angle and  direction.
-      float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-      slopeDirection = Vector3.ProjectOnPlane(new Vector3(0, 0, 1), slopeHit.normal).normalized;
+        if (state == BoardingStates.Jump /* && GetHeight() > 2f*/)
+        {
+            //Debug.Log("fixed");
+            //float horizontalInput = Input.GetAxis("Horizontal");
+            //float verticalInput = Input.GetAxis("Vertical");
 
-      // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
-      return angle < 20 ? false : true;
+            //Vector3 rotation = new Vector3(verticalInput, 0f, -horizontalInput) * 5000f;
+
+            //rb.AddTorque(rotation);
+
+            //if (!groundCheck.isGrounded) // Board rotation fix before land.
+            //{
+            //    Vector3 groundNormal = GetGroundNormal();
+
+            //    if (groundNormal != Vector3.zero)
+            //    {
+            //        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, groundNormal) * transform.rotation;
+            //        rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, 3f * Time.deltaTime));
+            //    }
+            //}
+        }
+
+        if (state == BoardingStates.Break)
+        {
+            // On break state. Decrase speed and stop the board.
+            speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
+        }
+        else
+        {
+            // Angular Velocity for left-right rotation.
+            rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
+
+        // Skating Physics
+        if (OnSlope())
+        {
+            // Angle Between direction of movement and slope.
+            float angle = Vector3.Angle(rb.rotation * (new Vector3(0, 0, 1)), slopeDirection);
+
+            // If direction of movement and slope are similar increase speed, otherwise decrease.
+            if (angle < 30 || angle > 330) speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
+            else if (angle < 45 || angle > 305) speed = Mathf.Clamp(speed + 0.05f, minSpeed, maxSpeed);
+            else if (angle > 45 && angle < 90) speed = Mathf.Clamp(speed - 0.05f, minSpeed, maxSpeed);
+            else if (angle > 90 && angle < 270) speed = Mathf.Clamp(speed - 0.2f, minSpeed, maxSpeed);
+        }
+        else
+        {
+            if (m_onSurface)
+            {
+                // If there is no slope, decrease speed.
+                speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
+            }
+            // Todo: Should check if board touching the ground. If it is, we should not lower speed.
+            }
+        }
+
+        velocity = GetVelocity();
+        rb.velocity = velocity;
     }
 
-    return false;
-  }
-
-  private bool IsInGround()
-  {
-
-    Vector3 size = GetComponent<BoxCollider>().bounds.size;
-    RaycastHit slopeHit;
-
-    if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, size.y * 0.5f + 0.2f))
+    private Vector3 GetVelocity()
     {
-      if (slopeHit.collider != null)
-      {
-        return true;
-      }
+        // Calculates velocity. Not modifies y axis, beacuse of default gravity.
+        Vector3 currentV = rb.velocity;
+        Vector3 newV = rb.rotation * (new Vector3(0, 0, 1) * speed);
+
+        newV.y = 0;
+        newV.y = currentV.y;
+
+        return newV;
     }
 
-    return false;
-  }
+    public float GetHeight()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            characterHeight = hit.distance - groundOffset;   // charachter height from the land.
+        }
+        Debug.Log("Characher height: " + characterHeight);
+        return characterHeight;
+    }
+    private bool OnSlope()
+    {
+        // Project a ray from pivot of object in the -y direction.
+        // If it is hit to the surface, get slope angle and direction.
+        float angle = Vector3.Angle(Vector3.up, m_collisionPoint);
+        slopeDirection = Vector3.ProjectOnPlane(new Vector3(0, 0, 1), m_surfaceNormal).normalized;
+        // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
+        Debug.Log("angle: " + angle);
+        return angle >= 20;
+    }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("IceFloor"))
+        {
+            m_surfaceCollisionInfo = collision;
+            Debug.Log("staym_surfaceCollisionInfo: " + m_surfaceCollisionInfo);
+            m_onSurface = true;
+            m_surfaceNormal = collision.GetContact(0).normal;
+            m_collisionPoint = collision.GetContact(0).point;
+        }
+
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("IceFloor"))
+        {
+            Debug.Log("exitm_surfaceCollisionInfo: " + m_surfaceCollisionInfo);
+            m_onSurface = false;
+        }
+    }
+    void Jump()
+    {
+        // Jump when the Jump button is pressed and we are on the ground.
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            Debug.Log("Jumped");
+            rb.AddForce(100 * jumpStrength * Vector3.up);
+        }
+    }
 }
