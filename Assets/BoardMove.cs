@@ -14,7 +14,6 @@ public class BoardMove : MonoBehaviour
 {
     private Vector3 m_surfaceNormal = new Vector3();
     private Vector3 m_collisionPoint = new Vector3();
-    private Collision m_surfaceCollisionInfo;
     private bool m_onSurface;
     private float minSpeed = 0f;
     private float maxSpeed = 30f;
@@ -29,14 +28,14 @@ public class BoardMove : MonoBehaviour
 
     public BoardingStates state = BoardingStates.Skate;
 
-    GroundCheck groundCheck;
+    VelocityCollider velocityCollider;
     public float groundOffset = 0.1f;
-    private float characterHeight;  
-
+    private float characterHeight;
+    float currentRotation;
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        groundCheck = GetComponentInChildren<GroundCheck>();
+        velocityCollider = GetComponentInChildren<VelocityCollider>();
     }
 
     void Update()
@@ -47,6 +46,7 @@ public class BoardMove : MonoBehaviour
             state = BoardingStates.Skate;
             // A/D Key: Change Board direction
             yRotation = Input.GetAxisRaw("Horizontal");
+            LimitYRot();
             // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
 
             Jump();
@@ -70,7 +70,17 @@ public class BoardMove : MonoBehaviour
             {
                 speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
             }
+
+            if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+            {
+                Debug.Log("YEA");
+                //rb.DORotate(Vector3.zero, 0.1f , RotateMode.LocalAxisAdd);
+                //.DOLocalRotate(Vector3.zero, 10 * Time.deltaTime, RotateMode.LocalAxisAdd);
+                //transform.DOLocalRotateQuaternion
+                //transform.DORotateQuaternion(Vector3.zero, Time.deltaTime, RotateMode.LocalAxisAdd);
+            }
         }
+
 
         if (!m_onSurface)
         {
@@ -78,11 +88,25 @@ public class BoardMove : MonoBehaviour
         }
     }
 
+    private void LimitYRot()
+    {
+        Vector3 boardEulerAngles = transform.localRotation.eulerAngles;
+        boardEulerAngles.y = (boardEulerAngles.y > 180) ? boardEulerAngles.y - 360 : boardEulerAngles.y;
+        boardEulerAngles.y = Mathf.Clamp(boardEulerAngles.y, -90f, 90f);
+
+        transform.localRotation = Quaternion.Euler(boardEulerAngles);
+    }
 
     void FixedUpdate()
     {
-        if (state == BoardingStates.Jump /* && GetHeight() > 2f*/)
+
+        if (state == BoardingStates.Jump  && GetHeight() > 2f)
         {
+            float v = Input.GetAxisRaw("Vertical");
+            float h = Input.GetAxisRaw("Horizontal");
+            Debug.Log("FreesTyle" + "  h: "+ h + "  v: " + v);
+            rb.AddTorque(new Vector3(v, yRotation, h) * 5000);
+
             //Debug.Log("fixed");
             //float horizontalInput = Input.GetAxis("Horizontal");
             //float verticalInput = Input.GetAxis("Vertical");
@@ -102,7 +126,6 @@ public class BoardMove : MonoBehaviour
             //    }
             //}
         }
-
         if (state == BoardingStates.Break)
         {
             // On break state. Decrase speed and stop the board.
@@ -136,8 +159,19 @@ public class BoardMove : MonoBehaviour
             }
         }
 
-        velocity = GetVelocity();
-        rb.velocity = velocity;
+
+        if(BoardingStates.Jump != state)
+        {
+            velocity = GetVelocity();
+            rb.velocity = velocity;
+        }
+
+    }
+
+    void SetCurrentRotation(float rot)
+    {
+        yRotation = Mathf.Clamp(rot, -90, 90);
+        rb.rotation = Quaternion.Euler(0, rot, 0);
     }
 
     private Vector3 GetVelocity()
@@ -169,7 +203,6 @@ public class BoardMove : MonoBehaviour
         float angle = Vector3.Angle(Vector3.up, m_collisionPoint);
         slopeDirection = Vector3.ProjectOnPlane(new Vector3(0, 0, 1), m_surfaceNormal).normalized;
         // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
-        Debug.Log("angle: " + angle);
         return angle >= 20;
     }
 
@@ -177,8 +210,6 @@ public class BoardMove : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("IceFloor"))
         {
-            m_surfaceCollisionInfo = collision;
-            Debug.Log("staym_surfaceCollisionInfo: " + m_surfaceCollisionInfo);
             m_onSurface = true;
             m_surfaceNormal = collision.GetContact(0).normal;
             m_collisionPoint = collision.GetContact(0).point;
@@ -189,7 +220,6 @@ public class BoardMove : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("IceFloor"))
         {
-            Debug.Log("exitm_surfaceCollisionInfo: " + m_surfaceCollisionInfo);
             m_onSurface = false;
         }
     }
