@@ -28,14 +28,12 @@ public class BoardMove : MonoBehaviour
 
   public BoardingStates state = BoardingStates.Skate;
 
-  VelocityCollider velocityCollider;
   public float groundOffset = 0.1f;
   private float characterHeight;
   float currentRotation;
   void Start()
   {
     rb = GetComponent<Rigidbody>();
-    velocityCollider = GetComponentInChildren<VelocityCollider>();
   }
 
   void Update()
@@ -46,7 +44,6 @@ public class BoardMove : MonoBehaviour
       state = BoardingStates.Skate;
       // A/D Key: Change Board direction
       yRotation = Input.GetAxisRaw("Horizontal");
-      LimitYRot();
       // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
 
       Jump();
@@ -74,10 +71,7 @@ public class BoardMove : MonoBehaviour
       if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
       {
         Debug.Log("YEA");
-        //rb.DORotate(Vector3.zero, 0.1f , RotateMode.LocalAxisAdd);
-        //.DOLocalRotate(Vector3.zero, 10 * Time.deltaTime, RotateMode.LocalAxisAdd);
-        //transform.DOLocalRotateQuaternion
-        //transform.DORotateQuaternion(Vector3.zero, Time.deltaTime, RotateMode.LocalAxisAdd);
+        // Todo: auto rotation fix.
       }
     }
 
@@ -86,15 +80,6 @@ public class BoardMove : MonoBehaviour
     {
       state = BoardingStates.Jump;
     }
-  }
-
-  private void LimitYRot()
-  {
-    Vector3 boardEulerAngles = transform.localRotation.eulerAngles;
-    boardEulerAngles.y = (boardEulerAngles.y > 180) ? boardEulerAngles.y - 360 : boardEulerAngles.y;
-    boardEulerAngles.y = Mathf.Clamp(boardEulerAngles.y, -90f, 90f);
-
-    transform.localRotation = Quaternion.Euler(boardEulerAngles);
   }
 
   void FixedUpdate()
@@ -166,12 +151,6 @@ public class BoardMove : MonoBehaviour
       rb.velocity = velocity;
     }
 
-  }
-
-  void SetCurrentRotation(float rot)
-  {
-    yRotation = Mathf.Clamp(rot, -90, 90);
-    rb.rotation = Quaternion.Euler(0, rot, 0);
   }
 
   private Vector3 GetVelocity()
