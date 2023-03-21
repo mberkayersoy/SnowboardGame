@@ -13,7 +13,7 @@ public class BoardMove : MonoBehaviour
 {
   private float minSpeed = 0f;
   private float maxSpeed = 30f;
-  private float speed = 0f;
+  public float speed = 0f;
   private float RotationUnit = 1f;
   private Rigidbody rb;
   private Vector3 slopeDirection;
@@ -36,6 +36,15 @@ public class BoardMove : MonoBehaviour
     // A/D Key: Board rotation
     yRotation = Input.GetAxisRaw("Horizontal");
 
+    if (Input.GetKey(KeyCode.LeftShift))
+    {
+      RotationUnit = 3f;
+    }
+    else
+    {
+      RotationUnit = 0.7f;
+    }
+
 
     // Space Key: Increase speed. Mostly for debugging.
     if (Input.GetKey(KeyCode.Space))
@@ -43,14 +52,14 @@ public class BoardMove : MonoBehaviour
       speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
     }
 
-    // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
-    if (Input.GetKeyDown(KeyCode.LeftShift))
+    // S (Down): Change State as break, slow down speed and rotate board for break animation.
+    if (Input.GetKeyDown(KeyCode.S))
     {
       state = BoardingStates.Break;
-      transform.DOLocalRotate(new Vector3(0, 90, 0), 1f, RotateMode.LocalAxisAdd);
+      transform.DOLocalRotate(new Vector3(0, 90, 0), 2f, RotateMode.LocalAxisAdd);
     }
-    // Left Shift (Up): Change State as Skate, rotate board as rotation before break.
-    else if (Input.GetKeyUp(KeyCode.LeftShift))
+    // S (Up): Change State as Skate, rotate board as rotation before break.
+    else if (Input.GetKeyUp(KeyCode.S))
     {
       transform.DOLocalRotate(new Vector3(0, -90, 0), 1f, RotateMode.LocalAxisAdd).OnComplete(() =>
       {
@@ -102,6 +111,7 @@ public class BoardMove : MonoBehaviour
 
     }
 
+    Debug.DrawRay(transform.position, slopeDirection * 9, Color.black);
     velocity = GetVelocity();
     rb.velocity = velocity;
   }
@@ -110,9 +120,9 @@ public class BoardMove : MonoBehaviour
   {
     // Calculates velocity. Not modifies y axis, beacuse of default gravity.
     Vector3 currentV = rb.velocity;
-    Vector3 newV = rb.rotation * (new Vector3(0, 0, 1) * speed);
+    Vector3 newV = rb.rotation * (new Vector3(0, 0, 1).normalized * speed);
 
-    newV.y = 0;
+
     newV.y = currentV.y;
 
     return newV;
@@ -124,12 +134,12 @@ public class BoardMove : MonoBehaviour
     Vector3 size = GetComponent<BoxCollider>().bounds.size;
     RaycastHit slopeHit;
 
-    if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, size.y * 0.5f + 0.3f))
+    if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, size.y * 0.5f + 0.5f))
     {
       // Project a ray from pivot of object in the -y direction.
       // If it is hit to the surface, get slope angle and  direction.
       float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-      slopeDirection = Vector3.ProjectOnPlane(new Vector3(0, 0, 1), slopeHit.normal).normalized;
+      slopeDirection = Vector3.ProjectOnPlane(transform.rotation * (new Vector3(0, 0, 1)), slopeHit.normal).normalized;
 
       // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
       return angle < 20 ? false : true;
