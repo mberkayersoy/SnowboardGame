@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
-
+using System;
+using TMPro;
 public enum BoardingStates
 {
   Skate,
@@ -26,13 +27,11 @@ public class BoardMove : MonoBehaviour
 
   private float yRotation = 0;
   private Vector3 velocity;
-
   public BoardingStates state = BoardingStates.Skate;
 
   public float groundOffset = 0.1f;
   private float characterHeight;
-  float currentRotation;
-  void Start()
+    void Start()
   {
     rb = GetComponent<Rigidbody>();
   }
@@ -45,6 +44,7 @@ public class BoardMove : MonoBehaviour
       state = BoardingStates.Skate;
       // A/D Key: Change Board direction
       yRotation = Input.GetAxisRaw("Horizontal");
+            rb.AddForce(slopeDirection.normalized * 5, ForceMode.Acceleration);
       // Left Shift (Down): Change State as break, slow down speed and rotate board for break animation.
 
       Jump();
@@ -71,56 +71,41 @@ public class BoardMove : MonoBehaviour
 
       if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
       {
-        Debug.Log("YEA");
-        // Todo: auto rotation fix.
+        //Todo: fixRotatino when board is surface.
+        
       }
     }
 
-
-    if (!m_onSurface)
+    if (!m_onSurface && GetHeight() > 2)
     {
       state = BoardingStates.Jump;
+                
+
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+        {
+            FixRotation();
+        }
+
     }
   }
-
-  void FixedUpdate()
-  {
-
-    if (state == BoardingStates.Jump && GetHeight() > 2f)
+    void FixedUpdate()
     {
-      float v = Input.GetAxisRaw("Vertical");
-      float h = Input.GetAxisRaw("Horizontal");
-      Debug.Log("FreesTyle" + "  h: " + h + "  v: " + v);
-      rb.AddTorque(new Vector3(v, yRotation, h) * 5000);
+        if (state == BoardingStates.Jump)
+        {
+          float v = Input.GetAxisRaw("Vertical");
+          float h = Input.GetAxisRaw("Horizontal");
+          rb.AddTorque(new Vector3(v, yRotation, h) * 10000);
+        }
 
-      //Debug.Log("fixed");
-      //float horizontalInput = Input.GetAxis(s"Horizontal");
-      //float verticalInput = Input.GetAxis("Vertical");
-
-      //Vector3 rotation = new Vector3(verticalInput, 0f, -horizontalInput) * 5000f;
-
-      //rb.AddTorque(rotation);
-
-      //if (!groundCheck.isGrounded) // Board rotation fix before land.
-      //{
-      //    Vector3 groundNormal = GetGroundNormal();
-
-      //    if (groundNormal != Vector3.zero)
-      //    {
-      //        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, groundNormal) * transform.rotation;
-      //        rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, 3f * Time.deltaTime));
-      //    }
-      //}
-    }
-    if (state == BoardingStates.Break)
-    {
-      // On break state. Decrase speed and stop the board.
-      speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
-    }
-    else
-    {
-      // Angular Velocity for left-right rotation.
-      rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
+        if (state == BoardingStates.Break)
+        {
+          // On break state. Decrase speed and stop the board.
+          speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
+        }
+        else
+        {
+                // Angular Velocity for left-right rotation.
+          rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
 
 
       // // Skating Physics
@@ -153,38 +138,49 @@ public class BoardMove : MonoBehaviour
     //   rb.velocity = velocity;
     // }
 
-  }
+    }
 
-  private Vector3 GetVelocity()
-  {
+    private void FixRotation()
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, -Vector3.up, out hit);
+        var localRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+            var euler = localRot.eulerAngles;
+            euler.y = 0;
+            localRot.eulerAngles = euler;
+            transform.localRotation = Quaternion.LerpUnclamped(transform.localRotation, localRot, 2 * Time.deltaTime);
+    }
+
+    private Vector3 GetVelocity()
+    {
     // Calculates velocity. Not modifies y axis, beacuse of default gravity.
     Vector3 currentV = rb.velocity;
     Vector3 newV = rb.rotation * (new Vector3(0, 0, 1) * speed);
-
     newV.y = 0;
     newV.y = currentV.y;
 
     return newV;
-  }
+    }
 
   public float GetHeight()
   {
-    RaycastHit hit;
-    if (Physics.Raycast(transform.position, Vector3.down, out hit))
-    {
-      characterHeight = hit.distance - groundOffset;   // charachter height from the land.
-    }
-    Debug.Log("Characher height: " + characterHeight);
-    return characterHeight;
+        RaycastHit hit;
+        Physics.Raycast(transform.position, Physics.gravity, out hit);
+        Debug.DrawRay(transform.position, Physics.gravity, Color.red);
+        return hit.distance;
+
   }
   private bool OnSlope()
   {
+        if (!m_onSurface) return false;
     // Project a ray from pivot of object in the -y direction.
     // If it is hit to the surface, get slope angle and direction.
     float angle = Vector3.Angle(Vector3.up, m_collisionPoint);
     slopeDirection = Vector3.ProjectOnPlane(new Vector3(0, 0, 1), m_surfaceNormal).normalized;
-    // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
-    return angle >= 20;
+
+        Debug.DrawRay(rb.position, slopeDirection * 5, Color.red);
+        // If angle of slope bigger then 20. There is a slope that should effect speed of board. 
+        return angle >= 20;
   }
 
   private void OnCollisionStay(Collision collision)
@@ -194,6 +190,7 @@ public class BoardMove : MonoBehaviour
       m_onSurface = true;
       m_surfaceNormal = collision.GetContact(0).normal;
       m_collisionPoint = collision.GetContact(0).point;
+
     }
 
   }
