@@ -16,12 +16,13 @@ public class BoardMove : MonoBehaviour
   private Vector3 m_surfaceNormal = new Vector3();
   private Vector3 m_collisionPoint = new Vector3();
   private bool m_onSurface;
-  private float minSpeed = 0f;
-  private float maxSpeed = 30f;
-  private float speed = 0f;
-  private float RotationUnit = 1f;
+  public static float minSpeed = 0f;
+  public static float maxSpeed = 30f;
+  private float speed = 5f;
+  private float RotationUnit = 3f;
   public float jumpStrength = 5;
   private Rigidbody rb;
+  private PhysicMaterial pm;
   private Vector3 slopeDirection;
 
   private float yRotation = 0;
@@ -37,9 +38,8 @@ public class BoardMove : MonoBehaviour
 
   void Update()
   {
-        //Debug.DrawRay(transform.position, GetSlopeDirection() * 3, Color.green);
-        //Debug.DrawRay(transform.position, rb.velocity * 3, Color.green);
-        if (m_onSurface)
+    // Debug.Log("m_onSurface: " + m_onSurface);
+    if (m_onSurface)
     {
       state = BoardingStates.Skate;
       // A/D Key: Change Board direction
@@ -107,34 +107,36 @@ public class BoardMove : MonoBehaviour
                 // Angular Velocity for left-right rotation.
           rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
 
-          // Skating Physics
-          if (OnSlope())
-          {
-            // Angle Between direction of movement and slope.
-            float angle = Vector3.Angle(rb.rotation * (new Vector3(0, 0, 1)), slopeDirection);
 
-            // If direction of movement and slope are similar increase speed, otherwise decrease.
-            if (angle < 30 || angle > 330) speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
-            else if (angle < 45 || angle > 305) speed = Mathf.Clamp(speed + 0.05f, minSpeed, maxSpeed);
-            else if (angle > 45 && angle < 90) speed = Mathf.Clamp(speed - 0.05f, minSpeed, maxSpeed);
-            else if (angle > 90 && angle < 270) speed = Mathf.Clamp(speed - 0.2f, minSpeed, maxSpeed);
-          }
-          else
-          {
-            if (m_onSurface)
-            {
-              // If there is no slope, decrease speed.
-              speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
-            }
-            // Todo: Should check if board touching the ground. If it is, we should not lower speed.
-          }
+      // // Skating Physics
+      // if (OnSlope())
+      // {
+      //   // Angle Between direction of movement and slope.
+      //   float angle = Vector3.Angle(rb.rotation * (new Vector3(0, 0, 1)), slopeDirection);
+
+      //   // If direction of movement and slope are similar increase speed, otherwise decrease.
+      //   if (angle < 30 || angle > 330) speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
+      //   else if (angle < 45 || angle > 305) speed = Mathf.Clamp(speed + 0.05f, minSpeed, maxSpeed);
+      //   else if (angle > 45 && angle < 90) speed = Mathf.Clamp(speed - 0.05f, minSpeed, maxSpeed);
+      //   else if (angle > 90 && angle < 270) speed = Mathf.Clamp(speed - 0.2f, minSpeed, maxSpeed);
+      // }
+      // else
+      // {
+      //   if (m_onSurface)
+      //   {
+      //     // If there is no slope, decrease speed.
+      //     speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
+      //   }
+      //   // Todo: Should check if board touching the ground. If it is, we should not lower speed.
+      // }
     }
 
-        if (BoardingStates.Jump != state)
-        {
-            velocity = GetVelocity();
-            rb.velocity = velocity;
-        }
+
+    // if (BoardingStates.Jump != state)
+    // {
+    //   velocity = GetVelocity();
+    //   rb.velocity = velocity;
+    // }
 
     }
 
