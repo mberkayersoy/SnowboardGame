@@ -26,14 +26,14 @@ public class BoardMove : MonoBehaviour
   private Vector3 slopeDirection;
 
   private float yRotation = 0;
-  private Vector3 velocity;
   public BoardingStates state = BoardingStates.Skate;
 
   public float groundOffset = 0.1f;
-  private float characterHeight;
+    private Animator animator;
     void Start()
   {
     rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
   }
 
   void Update()
@@ -42,6 +42,7 @@ public class BoardMove : MonoBehaviour
     if (m_onSurface)
     {
       state = BoardingStates.Skate;
+            animator.SetBool("isGrounded", true);
       // A/D Key: Change Board direction
       yRotation = Input.GetAxisRaw("Horizontal");
             rb.AddForce(slopeDirection.normalized * 5, ForceMode.Acceleration);
@@ -79,10 +80,11 @@ public class BoardMove : MonoBehaviour
     if (!m_onSurface && GetHeight() > 2)
     {
       state = BoardingStates.Jump;
-                
+            animator.SetBool("isGrounded", false);
 
-        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
+            if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
         {
+                Debug.Log("FÝX ROTATÝON");
             FixRotation();
         }
 
@@ -92,52 +94,22 @@ public class BoardMove : MonoBehaviour
     {
         if (state == BoardingStates.Jump)
         {
-          float v = Input.GetAxisRaw("Vertical");
-          float h = Input.GetAxisRaw("Horizontal");
-          rb.AddTorque(new Vector3(v, yRotation, h) * 10000);
+
+            float v = Input.GetAxisRaw("Vertical");
+            float h = Input.GetAxisRaw("Horizontal");
+            rb.AddTorque(new Vector3(v, yRotation, h) * 10000);
         }
 
         if (state == BoardingStates.Break)
         {
-          // On break state. Decrase speed and stop the board.
-          speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
+            // On break state. Decrase speed and stop the board.
+            speed = Mathf.Clamp(speed - 0.5f, minSpeed, maxSpeed);
         }
         else
         {
-                // Angular Velocity for left-right rotation.
-          rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
-
-
-      // // Skating Physics
-      // if (OnSlope())
-      // {
-      //   // Angle Between direction of movement and slope.
-      //   float angle = Vector3.Angle(rb.rotation * (new Vector3(0, 0, 1)), slopeDirection);
-
-      //   // If direction of movement and slope are similar increase speed, otherwise decrease.
-      //   if (angle < 30 || angle > 330) speed = Mathf.Clamp(speed + 0.1f, minSpeed, maxSpeed);
-      //   else if (angle < 45 || angle > 305) speed = Mathf.Clamp(speed + 0.05f, minSpeed, maxSpeed);
-      //   else if (angle > 45 && angle < 90) speed = Mathf.Clamp(speed - 0.05f, minSpeed, maxSpeed);
-      //   else if (angle > 90 && angle < 270) speed = Mathf.Clamp(speed - 0.2f, minSpeed, maxSpeed);
-      // }
-      // else
-      // {
-      //   if (m_onSurface)
-      //   {
-      //     // If there is no slope, decrease speed.
-      //     speed = Mathf.Clamp(speed - 0.01f, minSpeed, maxSpeed);
-      //   }
-      //   // Todo: Should check if board touching the ground. If it is, we should not lower speed.
-      // }
-    }
-
-
-    // if (BoardingStates.Jump != state)
-    // {
-    //   velocity = GetVelocity();
-    //   rb.velocity = velocity;
-    // }
-
+            // Angular Velocity for left-right rotation.
+            rb.angularVelocity = (new Vector3(0, yRotation, 0)) * RotationUnit;
+        }
     }
 
     private void FixRotation()
@@ -151,22 +123,12 @@ public class BoardMove : MonoBehaviour
             transform.localRotation = Quaternion.LerpUnclamped(transform.localRotation, localRot, 2 * Time.deltaTime);
     }
 
-    private Vector3 GetVelocity()
-    {
-    // Calculates velocity. Not modifies y axis, beacuse of default gravity.
-    Vector3 currentV = rb.velocity;
-    Vector3 newV = rb.rotation * (new Vector3(0, 0, 1) * speed);
-    newV.y = 0;
-    newV.y = currentV.y;
-
-    return newV;
-    }
-
   public float GetHeight()
   {
         RaycastHit hit;
         Physics.Raycast(transform.position, Physics.gravity, out hit);
         Debug.DrawRay(transform.position, Physics.gravity, Color.red);
+        Debug.Log("distance: " + hit.distance);
         return hit.distance;
 
   }
@@ -207,7 +169,7 @@ public class BoardMove : MonoBehaviour
     if (Input.GetKeyDown(KeyCode.LeftShift))
     {
       Debug.Log("Jumped");
-      rb.AddForce(100 * jumpStrength * Vector3.up);
-    }
+            rb.AddForce(100 * jumpStrength * Vector3.up);
+        }
   }
 }
