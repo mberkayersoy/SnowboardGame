@@ -49,7 +49,4 @@ public class BreakState : PlayerState
             controller.sphere.velocity = controller.sphere.velocity.normalized * Mathf.Max(magnitude - magnitude * Time.deltaTime, 0);
         }
     }
-
-
-
 }

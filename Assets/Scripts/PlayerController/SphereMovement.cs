@@ -42,7 +42,10 @@ public class SphereMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        boardModel.position = sphere.position - boardOffSet;
+        Vector3 currentVelocity = Vector3.zero;
+        boardModel.position = Vector3.SmoothDamp(boardModel.position, sphere.position - boardOffSet, ref currentVelocity, 0.125f, 2f);
+
+        //boardModel.position = sphere.position - boardOffSet;
         GroundedCheck();
         if (Grounded)
         {

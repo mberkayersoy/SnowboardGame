@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class JumpState : PlayerState
 {
-
+    float rotateSpeed = 190f;
     public JumpState(PlayerController sm) : base(sm)
     {
     }
@@ -16,17 +16,20 @@ public class JumpState : PlayerState
         {
             controller.SetState(controller.movementState);
         }
-        else if (controller.GetHeight() > 2)
+        else if (controller.GetHeight() > 1)
         {
             if (controller.vInput == 0 && controller.hInput == 0)
             {
                 controller.FixRotation();
             }
-            else
+            else if (controller.hInput != 0)
             {
-                controller.boardModel.Rotate(new Vector3(controller.vInput, 0f, controller.hInput) * 60 * Time.deltaTime);
+                controller.boardModel.Rotate(new Vector3(0, controller.hInput, 0) * rotateSpeed * Time.deltaTime);
             }
-
+            else if (controller.vInput != 0)
+            {
+                controller.boardModel.Rotate(new Vector3(controller.vInput, 0, 0) * rotateSpeed * Time.deltaTime);
+            }
         }
 
     }

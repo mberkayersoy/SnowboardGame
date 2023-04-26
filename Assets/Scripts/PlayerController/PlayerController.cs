@@ -9,12 +9,16 @@ public class PlayerController : MonoBehaviour
     public Transform boardModel;
     public Transform boardFront;
     public Transform boardTail;
-
+    public Camera playerCam;
+    
     [Header("Parameters")]
     public float jumpStrength = 10f;
     public float acceleration = 30f;
     public float gravity = 10f;
+    public float maxSpeed = 35f;
+    public float maxSlopeAngle = 60f;
     public Vector3 boardOffSet;
+
 
     [Header("Grounded")]
 
@@ -29,7 +33,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask GroundLayers;
     public float slopeLimit;
     public float slopeFriction;
-    float slopeAngle;
+    public float slopeAngle;
 
 
     [Header("Inputs")]
@@ -47,6 +51,8 @@ public class PlayerController : MonoBehaviour
     public PlayerState jumpState;
     public PlayerState breakState;
 
+    [Header("Transforms")]
+    public Transform pNeck;
 
     public void SetState(PlayerState state)
     {
@@ -68,10 +74,15 @@ public class PlayerController : MonoBehaviour
         SetState(movementState);
     }
 
-    // Update is called once per frame
+    private void LateUpdate()
+    {
+        //boardModel.position = sphere.position - boardOffSet;
+        boardModel.position = Vector3.Lerp(boardModel.position, sphere.position - boardOffSet, Time.deltaTime * 100);
+
+    }
+
     void Update()
     {
-        boardModel.position = sphere.position - boardOffSet;
 
         GetInputs();
         GroundedCheck();
@@ -82,7 +93,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Clamp Velocity
-        sphere.velocity = Vector3.ClampMagnitude(sphere.velocity, 35f);
+        sphere.velocity = Vector3.ClampMagnitude(sphere.velocity, 30f);
     }
 
     void GetInputs()
@@ -90,7 +101,7 @@ public class PlayerController : MonoBehaviour
         hInput = Input.GetAxis("Horizontal");
         vInput = Mathf.Max(Input.GetAxis("Vertical"), 0);
         isJumping = Input.GetKeyDown(KeyCode.Space);
-        isBreaking = Input.GetKey(KeyCode.S);
+        isBreaking = Input.GetKey(KeyCode.LeftShift);
         Debug.Log("isBreaking: " + isBreaking);
     }
 
@@ -101,15 +112,13 @@ public class PlayerController : MonoBehaviour
         Vector3 spherePosition = new Vector3(boardModel.position.x, boardModel.position.y - GroundedOffset,
             boardModel.position.z + 0.5f);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
-            QueryTriggerInteraction.Ignore);
+            QueryTriggerInteraction.Ignore);    
 
     }
 
-
-
     public void FixBoardYRotationOnGround()
     {
-        float rotationSpeed = 60f;
+        float rotationSpeed = 100f;
         RaycastHit hit1;
         RaycastHit hit2;
         Quaternion targetRotation;
@@ -129,21 +138,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public float OnSlope()
+    public Vector3 OnSlope()
     {
-        RaycastHit hit;
 
+        RaycastHit hit;
         if (Physics.Raycast(boardNormal.position, Vector3.down, out hit))
         {
             slopeAngle = Vector3.Angle(hit.normal, Vector3.up);
             Vector3 slopeDirection = Vector3.Cross(hit.normal, Vector3.down);
 
-            Debug.Log(slopeAngle + " slope direction: " + slopeDirection);
-            return slopeAngle;
+            //Debug.Log(slopeAngle + " slope direction: " + slopeDirection);
+            return slopeDirection;
         }
         else
         {
-            return 0;
+            return Vector3.zero;
         }
     }
     public float GetHeight()
@@ -157,12 +166,12 @@ public class PlayerController : MonoBehaviour
     public void FixRotation()
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, -Vector3.up, out hit);
-        var localRot = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+        Physics.Raycast(boardNormal.position, -Vector3.up, out hit);
+        var localRot = Quaternion.FromToRotation(boardModel.up, hit.normal) * boardModel.rotation;
         var euler = localRot.eulerAngles;
         euler.y = 0;
         localRot.eulerAngles = euler;
-        boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 2 * Time.deltaTime);
+        boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 1.5f * Time.deltaTime);
+        Debug.DrawLine(boardNormal.position, Physics.gravity, Color.red);
     }
-
 }
