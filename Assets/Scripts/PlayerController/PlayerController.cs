@@ -19,9 +19,10 @@ public class PlayerController : MonoBehaviour
     public float jumpStrength = 10f;
     public float acceleration = 0.5f;
     public float deceleration = 0.1f;
-    public float gravity = 10f;
-    public float maxSpeed = 80f;
+    public float maxSpeed = 55f;
+    public float rotationSpeed;
     public Vector3 boardOffSet;
+
 
 
     [Header("Grounded")]
@@ -137,7 +138,6 @@ public class PlayerController : MonoBehaviour
             boardModel.rotation = targetRotation;
         }
     }
-
     public bool GetLowerPoint()
     {
         RaycastHit frontHit1, frontHit2, backHit1, backHit2;
@@ -147,8 +147,8 @@ public class PlayerController : MonoBehaviour
         bool back1 = Physics.Raycast(boardTailHit1.position, Vector3.down, out backHit1, 20f);
         bool back2 = Physics.Raycast(boardTailHit2.position, Vector3.down, out backHit2, 20f);
 
-        float frontHeight = float.MinValue, backHeight = float.MinValue;
 
+        float frontHeight = float.MinValue, backHeight = float.MinValue;
         if (front1 || front2)
         {
             frontHeight = Mathf.Max(frontHit1.point.y, frontHit2.point.y);
@@ -195,9 +195,34 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(boardNormal.position, -boardNormal.up, out hit))
         {
-            groundNormal = hit.normal;   
-            return Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(boardNormal.right, Vector3.up)));
+            groundNormal = hit.normal;
+            float tmpAngle = Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(transform.right, Vector3.up)));
+            return tmpAngle;
+            if (tmpAngle <= 0)
+            {
+                if (GetLowerPoint())
+                {
+                    return tmpAngle;
+                }
+                else
+                {
+                    return -tmpAngle;
+                }
+            }
+            else
+            {
+                if (GetLowerPoint())
+                {
+                    return tmpAngle;
+                }
+                else
+                {
+                    return -tmpAngle;
+                }
+            }
+
         }
         return 0;
     }
+
 }
