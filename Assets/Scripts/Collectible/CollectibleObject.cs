@@ -18,6 +18,7 @@ public class CollectibleObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("collected");
+            //UIManager.Instance.UpdateScore(+1);
         }
     }
 }

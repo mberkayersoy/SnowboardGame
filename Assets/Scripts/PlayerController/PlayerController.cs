@@ -5,7 +5,6 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody sphere;
-    public Camera playerCam;
 
     [Header("Transforms")]
     public Transform boardNormal;
@@ -106,8 +105,6 @@ public class PlayerController : MonoBehaviour
         isJumping = Input.GetKeyDown(KeyCode.Space);
         isBreaking = Input.GetKey(KeyCode.LeftShift);
     }
-
-
     void GroundedCheck()
     {
         // set sphere position, with offset

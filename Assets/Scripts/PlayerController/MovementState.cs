@@ -42,6 +42,7 @@ public class MovementState : PlayerState
         controller.FixBoardYRotationOnGround();
         boardDirection = controller.boardModel.forward;
         boardDirection.y = 0f;
+        controller.sphere.AddForce(controller.acceleration * -controller.boardModel.up, ForceMode.Acceleration);
 
         controller.sphere.AddForce(controller.acceleration * controller.vInput * boardDirection, ForceMode.Acceleration);
 

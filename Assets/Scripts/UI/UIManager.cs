@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using Cinemachine;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,13 +12,14 @@ public class UIManager : MonoBehaviour
 
     [Header("MenuPanel")]
     public GameObject MenuPanel;
+    public Camera menuCamera;
     public Button pregameButton;
     public Button menuSettingsButton;
     public Button exitButton;
     public GameObject[] playerList;
     public GameObject[] boardList;
-    public Transform spawnpointPlayer;
-    public Transform spawnpointSnowboard;
+    public Transform spawnpointUIPlayer;
+    public Transform spawnpointUISnowboard;
     private GameObject currentPlayer;
     private GameObject currentBoard;
     private int currentPlayerIndex = 0;
@@ -43,10 +45,16 @@ public class UIManager : MonoBehaviour
     [Space(5)]
 
     [Header("Game Panel")]
+    public bool isGameStart;
     public GameObject GamePanel;
     public Button pauseButton;
     public int totalScore = 0;
     public TextMeshProUGUI scoreText;
+    public Transform spawnPoint;
+    public GameObject mainObjectPrefab;
+    public GameObject mainObject;
+    public Camera gameCamera;
+    public CinemachineVirtualCamera cmCamera;  
 
     [Space(5)]
 
@@ -122,8 +130,43 @@ public class UIManager : MonoBehaviour
 
     public void OnClickPlayButton()
     {
+        isGameStart = true;
         SetActivePanel(GamePanel.name);
+        StarGameSetups();
+
     }
+
+    private void StarGameSetups()
+    {
+        // First activate selected player and board.
+        currentPlayer.SetActive(isGameStart);
+        currentBoard.SetActive(isGameStart);
+
+        // Then set variables
+        DOTween.Kill(currentPlayer.transform);
+        DOTween.Kill(currentBoard.transform);
+        currentPlayer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        currentBoard.transform.rotation = Quaternion.Euler(0, 0, 0);
+        mainObject =  Instantiate(mainObjectPrefab);
+        currentBoard.transform.SetParent(mainObject.transform);
+        currentBoard.transform.position = new Vector3(-0.007f, 0.47f, -0.116f);
+        currentPlayer.transform.SetParent(currentBoard.transform);
+        currentPlayer.transform.position = new Vector3(0.014f, -0.028f, -0.006f);
+        mainObject.GetComponent<PlayerController>().playerModel = currentPlayer.transform;
+        mainObject.GetComponent<PlayerController>().boardModel = currentBoard.transform;
+        mainObject.GetComponent<PlayerController>().boardNormal = currentBoard.transform.GetChild(0);
+        mainObject.GetComponent<PlayerController>().boardFrontHit1 = currentBoard.transform.GetChild(1);
+        mainObject.GetComponent<PlayerController>().boardTailHit2 = currentBoard.transform.GetChild(2);
+        mainObject.transform.position = spawnPoint.position;
+
+        // Then deactivate menu camera and activate game camera.
+        menuCamera.gameObject.SetActive(!isGameStart);
+        gameCamera.gameObject.SetActive(isGameStart);
+        cmCamera.gameObject.SetActive(isGameStart);
+        cmCamera.Follow = currentPlayer.transform;
+        cmCamera.LookAt = currentBoard.transform;
+    }
+
     public void OnClickPregameButton()
     {
         currentPlayer.SetActive(false);
@@ -148,7 +191,7 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int score)
     {
         totalScore += score;
-        scoreText.text = "Score: " + totalScore;
+        scoreText.text = "Score: " + totalScore.ToString(); ;
     }
 
     public void SetAllButtonsInteractable()
@@ -199,7 +242,7 @@ public class UIManager : MonoBehaviour
             currentPlayerIndex = playerList.Length - 1;
         }
 
-        currentPlayer = Instantiate(playerList[currentPlayerIndex], spawnpointPlayer.position, lastrotation);
+        currentPlayer = Instantiate(playerList[currentPlayerIndex], spawnpointUIPlayer.position, lastrotation);
 
         RotateObjects();
 
@@ -224,7 +267,7 @@ public class UIManager : MonoBehaviour
             currentBoardIndex = boardList.Length - 1;
         }
 
-        currentBoard = Instantiate(boardList[currentBoardIndex], spawnpointSnowboard.position, lastrotation);
+        currentBoard = Instantiate(boardList[currentBoardIndex], spawnpointUISnowboard.position, lastrotation);
 
         RotateObjects();
 
