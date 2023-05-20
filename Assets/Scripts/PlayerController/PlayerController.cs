@@ -10,9 +10,8 @@ public class PlayerController : MonoBehaviour
     [Header("Transforms")]
     public Transform boardNormal;
     public Transform boardModel;
+    public Transform playerModel;
     public Transform boardFrontHit1;
-    public Transform boardFrontHit2;
-    public Transform boardTailHit1;
     public Transform boardTailHit2;
 
     [Header("Board Physics Variables")]
@@ -22,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 55f;
     public float rotationSpeed;
     public Vector3 boardOffSet;
+    public Vector3 playerOffSet;
 
 
 
@@ -79,6 +79,7 @@ public class PlayerController : MonoBehaviour
     {
         //boardModel.position = sphere.position - boardOffSet;
         boardModel.position = Vector3.Lerp(boardModel.position, sphere.position - boardOffSet, Time.deltaTime * 100);
+        playerModel.position = Vector3.Lerp(playerModel.position, boardModel.position - playerOffSet, Time.deltaTime * 100);
 
     }
 
@@ -92,7 +93,7 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        slopeAngle = GetSlopeAngle();
+        //slopeAngle = GetSlopeAngle();
         // Clamp Velocity
         sphere.velocity = Vector3.ClampMagnitude(sphere.velocity, maxSpeed);
         GroundedCheck();
@@ -114,7 +115,6 @@ public class PlayerController : MonoBehaviour
             boardModel.position.z + 0.5f);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
             QueryTriggerInteraction.Ignore);    
-
     }
 
     public void FixBoardYRotationOnGround()
@@ -138,38 +138,38 @@ public class PlayerController : MonoBehaviour
             boardModel.rotation = targetRotation;
         }
     }
-    public bool GetLowerPoint()
-    {
-        RaycastHit frontHit1, frontHit2, backHit1, backHit2;
+    //public bool GetLowerPoint()
+    //{
+    //    RaycastHit frontHit1, frontHit2, backHit1, backHit2;
 
-        bool front1 = Physics.Raycast(boardFrontHit1.position, Vector3.down, out frontHit1, 20f);
-        bool front2 = Physics.Raycast(boardFrontHit2.position, Vector3.down, out frontHit2, 20f);
-        bool back1 = Physics.Raycast(boardTailHit1.position, Vector3.down, out backHit1, 20f);
-        bool back2 = Physics.Raycast(boardTailHit2.position, Vector3.down, out backHit2, 20f);
+    //    bool front1 = Physics.Raycast(boardFrontHit1.position, Vector3.down, out frontHit1, 20f);
+    //    bool front2 = Physics.Raycast(boardFrontHit2.position, Vector3.down, out frontHit2, 20f);
+    //    bool back1 = Physics.Raycast(boardTailHit1.position, Vector3.down, out backHit1, 20f);
+    //    bool back2 = Physics.Raycast(boardTailHit2.position, Vector3.down, out backHit2, 20f);
 
 
-        float frontHeight = float.MinValue, backHeight = float.MinValue;
-        if (front1 || front2)
-        {
-            frontHeight = Mathf.Max(frontHit1.point.y, frontHit2.point.y);
-        }
+    //    float frontHeight = float.MinValue, backHeight = float.MinValue;
+    //    if (front1 || front2)
+    //    {
+    //        frontHeight = Mathf.Max(frontHit1.point.y, frontHit2.point.y);
+    //    }
 
-        if (back1 || back2)
-        {
-            backHeight = Mathf.Max(backHit1.point.y, backHit2.point.y);
-        }
+    //    if (back1 || back2)
+    //    {
+    //        backHeight = Mathf.Max(backHit1.point.y, backHit2.point.y);
+    //    }
 
-        if (frontHeight > backHeight)
-        {
-            return false;
-        }
-        else if (backHeight > frontHeight)
-        {
-            return true;
-        }
+    //    if (frontHeight > backHeight)
+    //    {
+    //        return false;
+    //    }
+    //    else if (backHeight > frontHeight)
+    //    {
+    //        return true;
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
     public float GetHeight()
     {
         RaycastHit hit;
@@ -189,40 +189,40 @@ public class PlayerController : MonoBehaviour
         boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 1.5f * Time.deltaTime);
     }
 
-    public float GetSlopeAngle()
-    {
-        // Get the normal of the ground below the object
-        RaycastHit hit;
-        if (Physics.Raycast(boardNormal.position, -boardNormal.up, out hit))
-        {
-            groundNormal = hit.normal;
-            float tmpAngle = Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(transform.right, Vector3.up)));
-            return tmpAngle;
-            if (tmpAngle <= 0)
-            {
-                if (GetLowerPoint())
-                {
-                    return tmpAngle;
-                }
-                else
-                {
-                    return -tmpAngle;
-                }
-            }
-            else
-            {
-                if (GetLowerPoint())
-                {
-                    return tmpAngle;
-                }
-                else
-                {
-                    return -tmpAngle;
-                }
-            }
+//    public float GetSlopeAngle()
+//    {
+//        // Get the normal of the ground below the object
+//        RaycastHit hit;
+//        if (Physics.Raycast(boardNormal.position, -boardNormal.up, out hit))
+//        {
+//            groundNormal = hit.normal;
+//            float tmpAngle = Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(transform.right, Vector3.up)));
+//            return tmpAngle;
+//            if (tmpAngle <= 0)
+//            {
+//                if (GetLowerPoint())
+//                {
+//                    return tmpAngle;
+//                }
+//                else
+//                {
+//                    return -tmpAngle;
+//                }
+//            }
+//            else
+//            {
+//                if (GetLowerPoint())
+//                {
+//                    return tmpAngle;
+//                }
+//                else
+//                {
+//                    return -tmpAngle;
+//                }
+//            }
 
-        }
-        return 0;
-    }
+//        }
+//        return 0;
+//    }
 
 }
