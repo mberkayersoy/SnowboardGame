@@ -29,50 +29,22 @@ public class MovementState : PlayerState
             controller.sphere.AddForce(controller.jumpStrength * controller.boardModel.up.normalized, ForceMode.Impulse);
         }
 
-        controller.FixBoardYRotationOnGround();
-        boardDirection = controller.boardModel.forward;
-        boardDirection.y = 0f;
-
-        controller.sphere.AddForce(controller.deceleration * controller.vInput * currentDirection, ForceMode.Force);
-
-        if (controller.slopeAngle < 0)
+        float angleToForward = Quaternion.Angle(controller.boardModel.rotation, Quaternion.identity);
+        if (angleToForward <= 90f)
         {
-            //Debug.Log("egimden yukari");
-            if (controller.GetLowerPoint())
-            {
-                currentDirection = boardDirection.normalized;
-                controller.sphere.AddForce(currentDirection * controller.acceleration * Time.deltaTime , ForceMode.Acceleration);
-                Debug.Log("Decelerating front");
-            }
-            else
-            {
-                currentDirection = -boardDirection.normalized;
-                controller.sphere.AddForce(currentDirection * controller.acceleration * Time.deltaTime , ForceMode.Acceleration);
-                Debug.Log("Decelerating tail");
-            }
-        }
-        else if (Mathf.Abs(controller.slopeAngle) < 0.1f)
-        {
-            Vector3 lastDirection = controller.sphere.velocity.normalized;
-            controller.sphere.AddForce(lastDirection * controller.acceleration * 0.5f , ForceMode.Acceleration);
-            //Debug.Log("duz zemin");
+            currentDirection = boardDirection;
         }
         else
         {
-            //Debug.Log("egimden asagi");
-            if (controller.GetLowerPoint())
-            {
-                currentDirection = boardDirection.normalized;
-                controller.sphere.AddForce(currentDirection * controller.acceleration * 0.5f , ForceMode.Acceleration);
-                Debug.Log("Accelerating front");
-            }
-            else
-            {
-                currentDirection = -boardDirection.normalized;
-                controller.sphere.AddForce(currentDirection * controller.acceleration * 0.5f , ForceMode.Acceleration);
-                Debug.Log("Accelerating tail");      
-            }
+            currentDirection = -boardDirection;
         }
+
+        controller.FixBoardYRotationOnGround();
+        boardDirection = controller.boardModel.forward;
+        boardDirection.y = 0f;
+        controller.sphere.AddForce(controller.acceleration * -controller.boardModel.up, ForceMode.Acceleration);
+
+        controller.sphere.AddForce(controller.acceleration * controller.vInput * boardDirection, ForceMode.Acceleration);
 
         Vector3 rotation = new Vector3(0.0f, controller.hInput, 0.0f);
         controller.boardModel.Rotate(rotation);
@@ -81,7 +53,7 @@ public class MovementState : PlayerState
         rotationVector.y = 0f; // sadece yönü etkileyecek vektör olarak saklanmasý için y eksenini sýfýrla
         controller.sphere.AddForce(rotationVector.normalized * controller.rotationSpeed, ForceMode.Acceleration);
 
-        Debug.DrawRay(controller.boardNormal.position, this.currentDirection, Color.red);
+        Debug.DrawRay(controller.boardNormal.position, this.currentDirection * 5, Color.red);
         Debug.DrawRay(controller.boardNormal.position, controller.sphere.velocity, Color.blue);
     }
 }
