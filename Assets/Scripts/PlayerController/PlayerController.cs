@@ -90,12 +90,19 @@ public class PlayerController : MonoBehaviour
             CurrentState.OnUpdate();
         }
     }
+
     private void FixedUpdate()
     {
         //slopeAngle = GetSlopeAngle();
+        GroundedCheck();
+
+        if (CurrentState != null)
+        {
+            CurrentState.OnFixedUpdate();
+        }
+
         // Clamp Velocity
         sphere.velocity = Vector3.ClampMagnitude(sphere.velocity, maxSpeed);
-        GroundedCheck();
     }
 
     void GetInputs()
@@ -111,7 +118,7 @@ public class PlayerController : MonoBehaviour
         Vector3 spherePosition = new Vector3(boardModel.position.x, boardModel.position.y - GroundedOffset,
             boardModel.position.z + 0.5f);
         Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers,
-            QueryTriggerInteraction.Ignore);    
+            QueryTriggerInteraction.Ignore);
     }
 
     public void FixBoardYRotationOnGround()
@@ -186,40 +193,40 @@ public class PlayerController : MonoBehaviour
         boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 1.5f * Time.deltaTime);
     }
 
-//    public float GetSlopeAngle()
-//    {
-//        // Get the normal of the ground below the object
-//        RaycastHit hit;
-//        if (Physics.Raycast(boardNormal.position, -boardNormal.up, out hit))
-//        {
-//            groundNormal = hit.normal;
-//            float tmpAngle = Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(transform.right, Vector3.up)));
-//            return tmpAngle;
-//            if (tmpAngle <= 0)
-//            {
-//                if (GetLowerPoint())
-//                {
-//                    return tmpAngle;
-//                }
-//                else
-//                {
-//                    return -tmpAngle;
-//                }
-//            }
-//            else
-//            {
-//                if (GetLowerPoint())
-//                {
-//                    return tmpAngle;
-//                }
-//                else
-//                {
-//                    return -tmpAngle;
-//                }
-//            }
+    //    public float GetSlopeAngle()
+    //    {
+    //        // Get the normal of the ground below the object
+    //        RaycastHit hit;
+    //        if (Physics.Raycast(boardNormal.position, -boardNormal.up, out hit))
+    //        {
+    //            groundNormal = hit.normal;
+    //            float tmpAngle = Vector3.Angle(groundNormal, Vector3.up) * Mathf.Sign(Vector3.Dot(groundNormal, Vector3.Cross(transform.right, Vector3.up)));
+    //            return tmpAngle;
+    //            if (tmpAngle <= 0)
+    //            {
+    //                if (GetLowerPoint())
+    //                {
+    //                    return tmpAngle;
+    //                }
+    //                else
+    //                {
+    //                    return -tmpAngle;
+    //                }
+    //            }
+    //            else
+    //            {
+    //                if (GetLowerPoint())
+    //                {
+    //                    return tmpAngle;
+    //                }
+    //                else
+    //                {
+    //                    return -tmpAngle;
+    //                }
+    //            }
 
-//        }
-//        return 0;
-//    }
+    //        }
+    //        return 0;
+    //    }
 
 }

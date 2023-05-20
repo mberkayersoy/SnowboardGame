@@ -13,5 +13,8 @@ public class PlayerState
 
     public virtual void OnStart() { }
     public virtual void OnUpdate() { }
+
+    public virtual void OnFixedUpdate() { }
+
     public virtual void OnExit() { }
 }

@@ -24,7 +24,7 @@ public class JumpState : PlayerState
             }
             else if (controller.hInput != 0)
             {
-                controller.boardModel.Rotate(new Vector3(0, controller.hInput, 0) * rotateSpeed * Time.deltaTime);
+                controller.boardModel.Rotate(new Vector3(0, controller.hInput * 50f * Time.deltaTime, 0) * rotateSpeed * Time.deltaTime);
             }
             else if (controller.vInput != 0)
             {
