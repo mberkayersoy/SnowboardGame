@@ -18,7 +18,13 @@ public class CollectibleObject : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("collected");
-            //UIManager.Instance.UpdateScore(+1);
+            UIManager.Instance.UpdateScore(+1);
+            gameObject.SetActive(false);
+        }
+
+        if (other.CompareTag("IceFloor"))
+        {
+            GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 }

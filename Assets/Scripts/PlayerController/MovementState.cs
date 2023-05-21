@@ -44,7 +44,7 @@ public class MovementState : PlayerState
 
         currentDirection = boardDirection.normalized;
 
-        controller.sphere.AddForce(controller.acceleration * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
+        controller.sphere.AddForce(500 * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
 
         Vector3 force = currentDirection * controller.vInput * controller.acceleration * Time.fixedDeltaTime;
         Debug.Log("Acceleration: " + force.magnitude);
