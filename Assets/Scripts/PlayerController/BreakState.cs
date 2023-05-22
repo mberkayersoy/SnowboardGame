@@ -6,6 +6,7 @@ public class BreakState : PlayerState
 {
     Transform beforeBreak;
     float RotationAmount = 0;
+    bool isRightBreak;
 
     public BreakState(PlayerController sm) : base(sm)
     {
@@ -25,20 +26,20 @@ public class BreakState : PlayerState
             // Start Move
             controller.SetState(controller.movementState);
         }
-        else if (!controller.isBreaking && RotationAmount > 0)
-        {
-            // Undo Rotate
-            Vector3 rotation = new Vector3(0.0f, -90 * Time.deltaTime, 0.0f);
-            controller.boardModel.Rotate(rotation);
-            RotationAmount = RotationAmount - (90 * Time.deltaTime);
-            controller.FixBoardYRotationOnGround();
-        }
         else if (controller.isBreaking && RotationAmount <= 90)
         {
             // Rotate For Break
             Vector3 rotation = new Vector3(0.0f, 90 * Time.deltaTime, 0.0f);
             controller.boardModel.Rotate(rotation);
             RotationAmount = RotationAmount + (90 * Time.deltaTime);
+            controller.FixBoardYRotationOnGround();
+        }
+        else if (!controller.isBreaking && RotationAmount > 0)
+        {
+            //Undo Rotate
+            Vector3 rotation = new Vector3(0.0f, -90 * Time.deltaTime, 0.0f);
+            controller.boardModel.Rotate(rotation);
+            RotationAmount = RotationAmount - (90 * Time.deltaTime);
             controller.FixBoardYRotationOnGround();
         }
 

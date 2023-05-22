@@ -6,7 +6,7 @@ namespace PathCreation.Examples {
     [ExecuteInEditMode]
     public class PathPlacer : PathSceneTool {
 
-        public GameObject prefab;
+        public GameObject[] prefab;
         public GameObject holder;
         public float spacing = 3;
 
@@ -24,7 +24,7 @@ namespace PathCreation.Examples {
                 while (dst < path.length) {
                     Vector3 point = path.GetPointAtDistance (dst);
                     Quaternion rot = path.GetRotationAtDistance (dst);
-                    Instantiate (prefab, point, rot, holder.transform);
+                    Instantiate(prefab[0], point, rot, holder.transform);
                     dst += spacing;
                 }
             }
