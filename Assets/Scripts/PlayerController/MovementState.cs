@@ -6,6 +6,7 @@ public class MovementState : PlayerState
 {
     Vector3 boardDirection;
     Vector3 currentDirection;
+    float counter = 2f;
 
     public MovementState(PlayerController sm) : base(sm)
     {
@@ -28,6 +29,7 @@ public class MovementState : PlayerState
         if (controller.isJumping)
         {
             controller.sphere.AddForce(controller.jumpStrength * controller.boardModel.up.normalized, ForceMode.Impulse);
+
             return;
         }
 
@@ -44,9 +46,9 @@ public class MovementState : PlayerState
 
         currentDirection = boardDirection.normalized;
 
-        controller.sphere.AddForce(500 * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
+        controller.sphere.AddForce(200 * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
 
-        Vector3 force = currentDirection * controller.vInput * controller.acceleration * Time.fixedDeltaTime;
+        Vector3 force = currentDirection * controller.vInput  * controller.acceleration * Time.fixedDeltaTime;
         Debug.Log("Acceleration: " + force.magnitude);
         controller.sphere.AddForce(force, ForceMode.Acceleration);
 
