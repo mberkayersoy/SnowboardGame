@@ -153,6 +153,7 @@ public class UIManager : MonoBehaviour
     public void OnClickPlayButton()
     {
         isGameStart = true;
+
         SetActivePanel(GamePanel.name);
         StarGameSetups();
 
@@ -170,6 +171,7 @@ public class UIManager : MonoBehaviour
         currentPlayer.transform.rotation = Quaternion.Euler(0, 0, 0);
         currentBoard.transform.rotation = Quaternion.Euler(0, 0, 0);
         mainObject = Instantiate(mainObjectPrefab);
+
         currentBoard.transform.SetParent(mainObject.transform);
         currentBoard.transform.position = new Vector3(-0.007f, 0.47f, -0.116f);
         currentPlayer.transform.SetParent(currentBoard.transform);
@@ -179,6 +181,7 @@ public class UIManager : MonoBehaviour
         mainObject.GetComponent<PlayerController>().boardNormal = currentBoard.transform.GetChild(0);
         mainObject.GetComponent<PlayerController>().boardFrontHit1 = currentBoard.transform.GetChild(1);
         mainObject.GetComponent<PlayerController>().boardTailHit2 = currentBoard.transform.GetChild(2);
+        //mainObject.GetComponent<PlayerController>().animator = currentPlayer.GetComponent<Animator>();
         mainObject.transform.position = spawnPoint.position;
 
         // Generate Path according to Game mmode

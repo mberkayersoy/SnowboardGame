@@ -10,5 +10,6 @@ public class Obstacle : MonoBehaviour
         {
             GetComponent<Rigidbody>().isKinematic = true;
         }
+
     }
 }
