@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public Rigidbody sphere;
+    public Animator animator;
 
     [Header("Transforms")]
     public Transform boardNormal;
@@ -52,8 +53,6 @@ public class PlayerController : MonoBehaviour
     public PlayerState jumpState;
     public PlayerState breakState;
 
-
-
     public void SetState(PlayerState state)
     {
         if (CurrentState != null)
@@ -70,6 +69,7 @@ public class PlayerController : MonoBehaviour
         movementState = new MovementState(this);
         jumpState = new JumpState(this);
         breakState = new BreakState(this);
+        animator = playerModel.gameObject.GetComponent<Animator>();
 
         SetState(movementState);
     }
@@ -91,6 +91,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void Test()
+    {
+        Debug.Log("Test func");
+    }
+    public void PlayFallingBackAnim()
+    {
+        animator.SetBool("FallingBack", true);
+    }
     private void FixedUpdate()
     {
         //slopeAngle = GetSlopeAngle();

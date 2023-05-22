@@ -1806,6 +1806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphere: {fileID: 1758642943}
+  animator: {fileID: 0}
   boardNormal: {fileID: 1247566334}
   boardModel: {fileID: 4455073963633995}
   playerModel: {fileID: 4031294768519875}
