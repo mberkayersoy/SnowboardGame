@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - IceFloor
+  - FailZone
   layers:
   - Default
   - TransparentFX
