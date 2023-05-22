@@ -29,13 +29,19 @@ public class CollectibleObject : MonoBehaviour
 
     void Update()
     {
-        if (uiManager.totalScore > 20 && currentMedal != gold)
+        if (uiManager.totalScore > 20)
         {
-            ActivateMedal(gold);
+            if (currentMedal != gold)
+            {
+                ActivateMedal(gold);
+            }
         }
-        else if (uiManager.totalScore > 10 && currentMedal != silver)
+        else if (uiManager.totalScore > 10 && uiManager.totalScore <= 20)
         {
-            ActivateMedal(silver);
+            if (currentMedal != silver)
+            {
+                ActivateMedal(silver);
+            }
         }
     }
 

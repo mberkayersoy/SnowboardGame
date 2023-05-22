@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class ObstacleRedArea : MonoBehaviour
 {
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        GameObject other = collision.gameObject;
-        Debug.Log("OnCollision: " + other.tag);
         if (other.CompareTag("Player"))
         {
             Debug.Log("OnCollision fail.");
