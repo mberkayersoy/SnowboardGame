@@ -57,13 +57,16 @@ public class UIManager : MonoBehaviour
     [Header("Game Panel")]
     public bool isGameStart;
     public GameObject GamePanel;
-    public Button pauseButton;
-    public int totalScore = 0;
-    public TextMeshProUGUI scoreText;
-    public Transform spawnPoint;
     public GameObject mainObjectPrefab;
     public GameObject mainObject;
     public GameObject currentPathObject;
+    public Button pauseButton;
+    public int totalScore = 0;
+    public AudioClip scoreAudio;
+    public Image medalIconUI;
+    public Sprite[] medalIconsList;
+    public TextMeshProUGUI scoreText;
+    public Transform spawnPoint;
     public Camera gameCamera;
     public CinemachineVirtualCamera cmCamera;
 
@@ -175,10 +178,13 @@ public class UIManager : MonoBehaviour
         if (mode == GameModes.Collactable)
         {
             currentPathObject = Instantiate(gameModePaths[0]);
+            medalIconUI.gameObject.SetActive(true);
+
         }
         else if (mode == GameModes.Obstacle)
         {
             currentPathObject = Instantiate(gameModePaths[1]);
+            medalIconUI.gameObject.SetActive(false);
         }
         else
         {
@@ -222,7 +228,18 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int score)
     {
         totalScore += score;
-        scoreText.text = "Score: " + totalScore.ToString(); ;
+
+        AudioSource.PlayClipAtPoint(scoreAudio, gameCamera.transform.position);
+        medalIconUI.GetComponent<RectTransform>().DOShakeScale(0.2f);
+        if (totalScore > 10 && totalScore <= 20)
+        {
+            medalIconUI.sprite = medalIconsList[1];
+        }
+        else if (totalScore > 20)
+        {
+            medalIconUI.sprite = medalIconsList[2];
+        }
+        scoreText.text = totalScore.ToString(); ;
     }
 
     public void SetAllButtonsInteractable()
