@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public enum GameModes
 {
@@ -78,6 +79,11 @@ public class UIManager : MonoBehaviour
     public Button menuButton;
     public Button pauseSettingsButton;
 
+    [Header("Game End Panel")]
+    public GameObject GameEndPanel;
+    public TextMeshProUGUI gameEndTitle;
+    public TextMeshProUGUI endScoreTitle;
+    public Button gameEndMenuButton;
 
     string lastPanel;
     string currentPanel;
@@ -109,6 +115,7 @@ public class UIManager : MonoBehaviour
         continueButton.onClick.AddListener(OnClickContinueButton);
         backButtonPreGame.onClick.AddListener(OnClickBackButton);
         backButtonSettings.onClick.AddListener(OnClickBackButton);
+        gameEndMenuButton.onClick.AddListener(OnClickResetScene);
     }
 
 
@@ -120,6 +127,7 @@ public class UIManager : MonoBehaviour
         SettingsPanel.SetActive(activePanel.Equals(SettingsPanel.name));
         GamePanel.SetActive(activePanel.Equals(GamePanel.name));
         PausePanel.SetActive(activePanel.Equals(PausePanel.name));
+        GameEndPanel.SetActive(activePanel.Equals(GameEndPanel.name));
         currentPanel = activePanel;
     }
     public void OnClickContinueButton()
@@ -202,6 +210,29 @@ public class UIManager : MonoBehaviour
         cmCamera.Follow = currentPlayer.transform;
         cmCamera.LookAt = currentBoard.transform;
         cmCamera.gameObject.SetActive(isGameStart);
+    }
+
+    public void EndGame(bool isWon)
+    {
+        if (isWon)
+        {
+            gameEndTitle.text = "Congrats!";
+        }
+        else
+        {
+            gameEndTitle.text = "Game Over!";
+        }
+
+        endScoreTitle.text = "Total Score: " + totalScore.ToString();
+
+        SetActivePanel(GameEndPanel.name);
+        Time.timeScale = 0;
+    }
+
+    public void OnClickResetScene()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("SampleScene");
     }
 
     public void OnClickPregameButton()

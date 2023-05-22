@@ -8,8 +8,7 @@ public class Obstacle : MonoBehaviour
     {
         if (other.CompareTag("IceFloor"))
         {
-            Debug.Log("HIT");
-            //GetComponent<Rigidbody>().isKinematic = true;
+            GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 }
