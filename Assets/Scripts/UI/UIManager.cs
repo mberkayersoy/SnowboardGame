@@ -6,6 +6,13 @@ using TMPro;
 using DG.Tweening;
 using Cinemachine;
 
+public enum GameModes
+{
+    Collactable = 0,
+    Obstacle = 1,
+    Freestyle = 2,
+}
+
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -24,14 +31,17 @@ public class UIManager : MonoBehaviour
     private GameObject currentBoard;
     private int currentPlayerIndex = 0;
     private int currentBoardIndex = 0;
-    
-    [Space (5)]
+
+    [Space(5)]
 
     [Header("PreGamePanel")]
     public GameObject PreGamePanel;
     public Button playButton;
     public Button backButtonPreGame;
     public Button[] gameModes;
+    public GameObject[] gameModePaths;
+    public GameObject spawnHolder;
+
     private Button selectedMode;
 
     [Space(5)]
@@ -53,8 +63,9 @@ public class UIManager : MonoBehaviour
     public Transform spawnPoint;
     public GameObject mainObjectPrefab;
     public GameObject mainObject;
+    public GameObject currentPathObject;
     public Camera gameCamera;
-    public CinemachineVirtualCamera cmCamera;  
+    public CinemachineVirtualCamera cmCamera;
 
     [Space(5)]
 
@@ -97,7 +108,7 @@ public class UIManager : MonoBehaviour
         backButtonSettings.onClick.AddListener(OnClickBackButton);
     }
 
-    
+
     public void SetActivePanel(string activePanel)
     {
         lastPanel = currentPanel;
@@ -113,7 +124,7 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 1;
         SetActivePanel(GamePanel.name);
     }
-    
+
     public void OnClickBackButton()
     {
         if (lastPanel == "MenuUI")
@@ -147,7 +158,7 @@ public class UIManager : MonoBehaviour
         DOTween.Kill(currentBoard.transform);
         currentPlayer.transform.rotation = Quaternion.Euler(0, 0, 0);
         currentBoard.transform.rotation = Quaternion.Euler(0, 0, 0);
-        mainObject =  Instantiate(mainObjectPrefab);
+        mainObject = Instantiate(mainObjectPrefab);
         currentBoard.transform.SetParent(mainObject.transform);
         currentBoard.transform.position = new Vector3(-0.007f, 0.47f, -0.116f);
         currentPlayer.transform.SetParent(currentBoard.transform);
@@ -159,12 +170,32 @@ public class UIManager : MonoBehaviour
         mainObject.GetComponent<PlayerController>().boardTailHit2 = currentBoard.transform.GetChild(2);
         mainObject.transform.position = spawnPoint.position;
 
+        // Generate Path according to Game mmode
+        GameModes mode = selectedMode.GetComponent<GameModeButtonScript>().mode;
+        if (mode == GameModes.Collactable)
+        {
+            currentPathObject = Instantiate(gameModePaths[0]);
+        }
+        else if (mode == GameModes.Obstacle)
+        {
+            currentPathObject = Instantiate(gameModePaths[1]);
+        }
+        else
+        {
+            Debug.LogError("This mode not implemented yet: " + mode.ToString());
+            currentPathObject = Instantiate(gameModePaths[2]);
+        }
+        PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
+        pathPlacer.holder = spawnHolder;
+        pathPlacer.Generate();
+
         // Then deactivate menu camera and activate game camera.
         menuCamera.gameObject.SetActive(!isGameStart);
         gameCamera.gameObject.SetActive(isGameStart);
-        cmCamera.gameObject.SetActive(isGameStart);
+
         cmCamera.Follow = currentPlayer.transform;
         cmCamera.LookAt = currentBoard.transform;
+        cmCamera.gameObject.SetActive(isGameStart);
     }
 
     public void OnClickPregameButton()
@@ -217,7 +248,7 @@ public class UIManager : MonoBehaviour
 
         foreach (Button button in gameModes)
         {
-            if (clickedButton != button) 
+            if (clickedButton != button)
                 button.interactable = false;
         }
     }

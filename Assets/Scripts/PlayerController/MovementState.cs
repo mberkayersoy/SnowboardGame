@@ -48,8 +48,7 @@ public class MovementState : PlayerState
 
         controller.sphere.AddForce(200 * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
 
-        Vector3 force = currentDirection * controller.vInput  * controller.acceleration * Time.fixedDeltaTime;
-        Debug.Log("Acceleration: " + force.magnitude);
+        Vector3 force = currentDirection * controller.vInput * controller.acceleration * Time.fixedDeltaTime;
         controller.sphere.AddForce(force, ForceMode.Acceleration);
 
         controller.FixBoardYRotationOnGround();
