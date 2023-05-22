@@ -83,7 +83,7 @@ public class UIManager : MonoBehaviour
     public GameObject GameEndPanel;
     public TextMeshProUGUI gameEndTitle;
     public TextMeshProUGUI endScoreTitle;
-    public Button gameEndMenuButton;
+    public Button gameEndRestartButton;
 
     string lastPanel;
     string currentPanel;
@@ -115,7 +115,7 @@ public class UIManager : MonoBehaviour
         continueButton.onClick.AddListener(OnClickContinueButton);
         backButtonPreGame.onClick.AddListener(OnClickBackButton);
         backButtonSettings.onClick.AddListener(OnClickBackButton);
-        gameEndMenuButton.onClick.AddListener(OnClickResetScene);
+        gameEndRestartButton.onClick.AddListener(OnClickResetScene);
     }
 
 
