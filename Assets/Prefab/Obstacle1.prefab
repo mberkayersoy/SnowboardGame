@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 9128321964345714144}
   - component: {fileID: 2682811925106540818}
   - component: {fileID: 6848153013222735621}
+  - component: {fileID: 2778391509089851461}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -248,7 +249,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1767
+  m_VersionIndex: 1770
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -344,6 +345,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &2778391509089851461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3765004262957565036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3ec321e79a431748ba0ee31d9e827b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8346869439387965070
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,6 +369,7 @@ GameObject:
   - component: {fileID: 8333117950180626694}
   - component: {fileID: 8324003314159608462}
   - component: {fileID: 8346869439387965071}
+  - component: {fileID: 8131530857052019216}
   m_Layer: 0
   m_Name: SM_Prop_Fence_01
   m_TagString: Untagged
@@ -443,6 +457,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 7d732d6f83166c446b5c8b9a09db93b7, type: 3}
+--- !u!114 &8131530857052019216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8346869439387965070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a540ee089528e449308f70bae50b3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8762499281108813804
 GameObject:
   m_ObjectHideFlags: 0
@@ -492,7 +518,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3be227ebd9d5049bffa90fe808fee8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  greenArea: {fileID: 3765004262957565036}
 --- !u!65 &8762499281108813806
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -504,8 +529,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 7.08, y: 3.15, z: 1}
-  m_Center: {x: 0, y: 1.57, z: 0}
+  m_Size: {x: 7.0800004, y: 1.6393626, z: 1.0014429}
+  m_Center: {x: 0, y: 0.92665976, z: -0.027435472}
 --- !u!54 &4112607600165010759
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -534,6 +559,7 @@ GameObject:
   - component: {fileID: 8762499281469986297}
   - component: {fileID: 8762499281469986296}
   - component: {fileID: 8762499281469986302}
+  - component: {fileID: 1534218798713186459}
   m_Layer: 0
   m_Name: SM_Prop_Fence_01 (1)
   m_TagString: Untagged
@@ -621,3 +647,15 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 7d732d6f83166c446b5c8b9a09db93b7, type: 3}
+--- !u!114 &1534218798713186459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8762499281469986301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a540ee089528e449308f70bae50b3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
