@@ -217,6 +217,7 @@ public class UIManager : MonoBehaviour
 
     public void EndGame(bool isWon)
     {
+        mainObject.GetComponent<PlayerController>().PlayFallingBackAnim();
         if (isWon)
         {
             gameEndTitle.text = "Congrats!";
@@ -225,9 +226,13 @@ public class UIManager : MonoBehaviour
         {
             gameEndTitle.text = "Game Over!";
         }
-
         endScoreTitle.text = "Total Score: " + totalScore.ToString();
 
+        Invoke("OpenGameEndPanel", 5);
+    }
+
+    public void OpenGameEndPanel()
+    {
         SetActivePanel(GameEndPanel.name);
         Time.timeScale = 0;
     }

@@ -9,7 +9,7 @@ public class ObstacleRedArea : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("OnCollision: Player failed.");
-            UIManager.Instance.mainObject.GetComponent<PlayerController>().PlayFallingBackAnim();
+            UIManager.Instance.EndGame(false);
         }
     }
 }

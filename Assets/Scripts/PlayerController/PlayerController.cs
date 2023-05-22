@@ -98,7 +98,6 @@ public class PlayerController : MonoBehaviour
     public void PlayFallingBackAnim()
     {
         animator.SetBool("FallingBack", true);
-        UIManager.Instance.Invoke("EndGame", 5);
     }
     private void FixedUpdate()
     {
