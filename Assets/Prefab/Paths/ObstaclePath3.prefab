@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3389996353120323598
+--- !u!1 &4186159626187317584
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,56 +8,56 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3389996353120323597}
-  - component: {fileID: 3389996353120323596}
-  - component: {fileID: 3389996353120323599}
+  - component: {fileID: 4186159626187317587}
+  - component: {fileID: 4186159626187317586}
+  - component: {fileID: 4186159626187317585}
   m_Layer: 0
-  m_Name: CollectablePath
+  m_Name: ObstaclePath3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3389996353120323597
+--- !u!4 &4186159626187317587
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2351.3, y: 1313.4, z: 1440.4}
+  m_GameObject: {fileID: 4186159626187317584}
+  m_LocalRotation: {x: -0.08471743, y: 0.7873649, z: -0.11108956, w: 0.6004486}
+  m_LocalPosition: {x: 769, y: 2192.9, z: 10318.2}
   m_LocalScale: {x: 10.289282, y: 10.289282, z: 10.289282}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3389996353120323596
+  m_LocalEulerAnglesHint: {x: 4.198, y: 104.769, z: -15.517}
+--- !u!114 &4186159626187317586
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
+  m_GameObject: {fileID: 4186159626187317584}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d12b1fe1b42884d7692049d7f6f79ee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathCreator: {fileID: 3389996353120323599}
+  pathCreator: {fileID: 4186159626187317585}
   autoUpdate: 1
   prefab:
-  - {fileID: 818445521969626098, guid: 90bb84b6e766736429ec26b72be2aa26, type: 3}
+  - {fileID: 8762499281108813804, guid: af67311c8095af54c8295f5a181ec3f1, type: 3}
   holder: {fileID: 0}
   spacing: 5
---- !u!114 &3389996353120323599
+--- !u!114 &4186159626187317585
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
+  m_GameObject: {fileID: 4186159626187317584}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e5ac92bc18f545cc84cd886ece82b4d, type: 3}
@@ -66,10 +66,31 @@ MonoBehaviour:
   editorData:
     _bezierPath:
       points:
-      - {x: -9.688575, y: 0.074113354, z: 2.8223462}
-      - {x: -9.640194, y: -0.51653963, z: 10.557125}
-      - {x: 80.25901, y: -59.31568, z: 58.41491}
-      - {x: 139.77853, y: -83.54062, z: 99.67274}
+      - {x: -9.702906, y: 0.072926044, z: 2.8117874}
+      - {x: -11.245846, y: -0.6533353, z: 3.7968102}
+      - {x: -0.3257699, y: -5.7515955, z: 10.389705}
+      - {x: 5.3840413, y: -8.2315035, z: 13.562694}
+      - {x: 20.73853, y: -14.900326, z: 22.095308}
+      - {x: 46.955524, y: -21.88092, z: 29.962938}
+      - {x: 58.888348, y: -19.535532, z: 19.535704}
+      - {x: 74.70206, y: -16.427357, z: 5.7172403}
+      - {x: 96.679054, y: -21.830406, z: 24.787638}
+      - {x: 98.67276, y: -26.96782, z: 32.527157}
+      - {x: 98.854485, y: -27.436096, z: 33.232616}
+      - {x: 114.875206, y: -30.395203, z: 30.382479}
+      - {x: 115.2844, y: -29.661493, z: 30.529875}
+      - {x: 115.69985, y: -28.916563, z: 30.679525}
+      - {x: 122.50858, y: -34.048176, z: 43.616837}
+      - {x: 122.80048, y: -33.92105, z: 44.044346}
+      - {x: 123.27471, y: -33.714523, z: 44.738876}
+      - {x: 140.93405, y: -40.954613, z: 44.17816}
+      - {x: 141.19685, y: -40.558353, z: 44.33234}
+      - {x: 141.65213, y: -39.87189, z: 44.59943}
+      - {x: 150.31316, y: -43.418823, z: 57.395733}
+      - {x: 150.58525, y: -43.262238, z: 57.76559}
+      - {x: 151.07097, y: -42.98271, z: 58.425835}
+      - {x: 174.49417, y: -48.517467, z: 74.99273}
+      - {x: 174.74997, y: -48.15775, z: 75.17038}
       isClosed: 0
       space: 0
       controlMode: 0
@@ -81,9 +102,16 @@ MonoBehaviour:
       perAnchorNormalsAngle:
       - 0
       - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
       globalNormalsAngle: 90
       flipNormals: 0
-    vertexPathUpToDate: 0
+    vertexPathUpToDate: 1
     vertexPathMaxAngleError: 0
     vertexPathMinVertexSpacing: 0
     showTransformTool: 1

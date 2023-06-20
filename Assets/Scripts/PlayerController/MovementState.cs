@@ -6,7 +6,6 @@ public class MovementState : PlayerState
 {
     Vector3 boardDirection;
     Vector3 currentDirection;
-    float counter = 2f;
 
     public MovementState(PlayerController sm) : base(sm)
     {
@@ -17,11 +16,13 @@ public class MovementState : PlayerState
     {
         if (!controller.Grounded)
         {
+            controller.tailVFX.SetActive(false);
             controller.SetState(controller.jumpState);
             return;
         }
         else if (controller.isBreaking)
         {
+            controller.tailVFX.SetActive(false);
             controller.SetState(controller.breakState);
             return;
         }
@@ -32,7 +33,6 @@ public class MovementState : PlayerState
 
             return;
         }
-
         controller.FixBoardYRotationOnGround();
         boardDirection = controller.boardModel.forward;
 
@@ -43,12 +43,12 @@ public class MovementState : PlayerState
 
     public override void OnFixedUpdate()
     {
-
+        
         currentDirection = boardDirection.normalized;
+        controller.rightVFX.SetActive(false);
+        controller.sphere.AddForce(200 * Time.fixedDeltaTime * -controller.boardModel.up, ForceMode.Acceleration);
 
-        controller.sphere.AddForce(200 * -controller.boardModel.up * Time.fixedDeltaTime, ForceMode.Acceleration);
-
-        Vector3 force = currentDirection * controller.vInput * controller.acceleration * Time.fixedDeltaTime;
+        Vector3 force = controller.acceleration * controller.vInput * Time.fixedDeltaTime * currentDirection;
         controller.sphere.AddForce(force, ForceMode.Acceleration);
 
         controller.FixBoardYRotationOnGround();

@@ -40,8 +40,14 @@ public class BreakState : PlayerState
             if (controller.isBreaking && RotationAmount <= 0)
             {
                 // Start Break
-                if (controller.hInput < 0) RotationWay = -1;
-                else RotationWay = 1;
+                if (controller.hInput < 0) {
+                    RotationWay = -1;
+                }
+                else
+                {
+                    RotationWay = 1;
+                }
+
             }
             // Rotate For Break
             Vector3 rotation = new Vector3(0.0f, 90 * Time.deltaTime * RotationWay, 0.0f);

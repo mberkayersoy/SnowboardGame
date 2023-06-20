@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     public Rigidbody sphere;
     public Animator animator;
+    public GameObject tailVFX;
+    public GameObject leftVFX;
+    public GameObject rightVFX;
 
     [Header("Transforms")]
     public Transform boardNormal;
@@ -13,6 +16,8 @@ public class PlayerController : MonoBehaviour
     public Transform playerModel;
     public Transform boardFrontHit1;
     public Transform boardTailHit2;
+    public Transform boardRight;
+    public Transform boardLeft;
 
     [Header("Board Physics Variables")]
     public float jumpStrength = 10f;
@@ -70,8 +75,21 @@ public class PlayerController : MonoBehaviour
         jumpState = new JumpState(this);
         breakState = new BreakState(this);
         animator = playerModel.gameObject.GetComponent<Animator>();
-
+        tailVFX = Instantiate(tailVFX, boardFrontHit1.position, Quaternion.Euler(-90, 0 , 0), boardFrontHit1);
         SetState(movementState);
+    }
+
+    public void ChangeVFX(float rotationWay)
+    {
+        if (rotationWay == 1)
+        {
+            tailVFX = Instantiate(leftVFX, boardRight.position, Quaternion.identity, boardRight);
+        }
+        else
+        {
+            tailVFX = Instantiate(leftVFX, boardLeft.position, Quaternion.identity, boardLeft);
+        }
+
     }
 
     private void LateUpdate()
@@ -91,13 +109,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void Test()
+    public IEnumerator PlayAnim(bool isWon)
     {
-        Debug.Log("Test func");
-    }
-    public void PlayFallingBackAnim()
-    {
-        animator.SetBool("FallingBack", true);
+        if (!isWon)
+        {
+            tailVFX.SetActive(false);
+            animator.SetBool("FallingBack", true);
+            sphere.isKinematic = true;
+        }
+        else
+        {
+            sphere.drag = 3;
+            yield return new WaitForSeconds(1.5f);
+            animator.SetBool("Victory", true);
+            tailVFX.SetActive(false);
+        }
+
     }
     private void FixedUpdate()
     {
@@ -198,7 +225,7 @@ public class PlayerController : MonoBehaviour
         var euler = localRot.eulerAngles;
         euler.y = 0;
         localRot.eulerAngles = euler;
-        boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 1.5f * Time.deltaTime);
+        boardModel.localRotation = Quaternion.LerpUnclamped(boardModel.localRotation, localRot, 3f * Time.deltaTime);
     }
 
     //    public float GetSlopeAngle()

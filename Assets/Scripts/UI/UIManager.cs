@@ -40,7 +40,8 @@ public class UIManager : MonoBehaviour
     public Button playButton;
     public Button backButtonPreGame;
     public Button[] gameModes;
-    public GameObject[] gameModePaths;
+    public GameObject[] collectiblePaths;
+    public GameObject[] obstaclePaths;
     public GameObject spawnHolder;
 
     private Button selectedMode;
@@ -67,9 +68,10 @@ public class UIManager : MonoBehaviour
     public Image medalIconUI;
     public Sprite[] medalIconsList;
     public TextMeshProUGUI scoreText;
-    public Transform spawnPoint;
+    public Transform[] spawnPointList;
     public Camera gameCamera;
     public CinemachineVirtualCamera cmCamera;
+    public int levelCounter = 0;
 
     [Space(5)]
 
@@ -84,6 +86,7 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI gameEndTitle;
     public TextMeshProUGUI endScoreTitle;
     public Button gameEndRestartButton;
+    public Button nextlevelButton;
 
     string lastPanel;
     string currentPanel;
@@ -101,6 +104,8 @@ public class UIManager : MonoBehaviour
     void Start()
     {
         totalScore = 0;
+        levelCounter = 0;
+        nextlevelButton.gameObject.SetActive(false);
         SetActivePanel(MenuPanel.name);
         playButton.interactable = false;
         InstantiateCharacter();
@@ -116,12 +121,14 @@ public class UIManager : MonoBehaviour
         backButtonPreGame.onClick.AddListener(OnClickBackButton);
         backButtonSettings.onClick.AddListener(OnClickBackButton);
         gameEndRestartButton.onClick.AddListener(OnClickResetScene);
+        nextlevelButton.onClick.AddListener(OnclickNextLevelButton);
     }
 
 
     public void SetActivePanel(string activePanel)
     {
         lastPanel = currentPanel;
+
         MenuPanel.SetActive(activePanel.Equals(MenuPanel.name));
         PreGamePanel.SetActive(activePanel.Equals(PreGamePanel.name));
         SettingsPanel.SetActive(activePanel.Equals(SettingsPanel.name));
@@ -181,30 +188,14 @@ public class UIManager : MonoBehaviour
         mainObject.GetComponent<PlayerController>().boardNormal = currentBoard.transform.GetChild(0);
         mainObject.GetComponent<PlayerController>().boardFrontHit1 = currentBoard.transform.GetChild(1);
         mainObject.GetComponent<PlayerController>().boardTailHit2 = currentBoard.transform.GetChild(2);
+        mainObject.GetComponent<PlayerController>().boardRight = currentBoard.transform.GetChild(3);
+        mainObject.GetComponent<PlayerController>().boardLeft = currentBoard.transform.GetChild(4);
         //mainObject.GetComponent<PlayerController>().animator = currentPlayer.GetComponent<Animator>();
-        mainObject.transform.position = spawnPoint.position;
+        mainObject.transform.position = spawnPointList[levelCounter].position;
 
-        // Generate Path according to Game mmode
-        GameModes mode = selectedMode.GetComponent<GameModeButtonScript>().mode;
-        if (mode == GameModes.Collactable)
-        {
-            currentPathObject = Instantiate(gameModePaths[0]);
-            medalIconUI.gameObject.SetActive(true);
 
-        }
-        else if (mode == GameModes.Obstacle)
-        {
-            currentPathObject = Instantiate(gameModePaths[1]);
-            medalIconUI.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("This mode not implemented yet: " + mode.ToString());
-            currentPathObject = Instantiate(gameModePaths[2]);
-        }
-        PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
-        pathPlacer.holder = spawnHolder;
-        pathPlacer.Generate();
+        CreateGameModePath();
+
 
         // Then deactivate menu camera and activate game camera.
         menuCamera.gameObject.SetActive(!isGameStart);
@@ -215,12 +206,49 @@ public class UIManager : MonoBehaviour
         cmCamera.gameObject.SetActive(isGameStart);
     }
 
+
+    public void CreateGameModePath()
+    {
+        
+        if (currentPathObject != null)
+        {
+            Destroy(currentPathObject);
+        }
+        // Generate Path according to Game mmode
+        GameModes mode = selectedMode.GetComponent<GameModeButtonScript>().mode;
+        if (mode == GameModes.Collactable)
+        {
+            currentPathObject = Instantiate(collectiblePaths[levelCounter]);
+            medalIconUI.gameObject.SetActive(true);
+
+        }
+        else if (mode == GameModes.Obstacle)
+        {
+            currentPathObject = Instantiate(obstaclePaths[levelCounter]);
+            medalIconUI.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogError("This mode not implemented yet: " + mode.ToString());
+            //currentPathObject = Instantiate(gameModePaths[2]);
+        }
+        PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
+        pathPlacer.holder = spawnHolder;
+        pathPlacer.Generate();
+    }
+
     public void EndGame(bool isWon)
     {
-        mainObject.GetComponent<PlayerController>().PlayFallingBackAnim();
+        StartCoroutine(mainObject.GetComponent<PlayerController>().PlayAnim(isWon));
         if (isWon)
         {
             gameEndTitle.text = "Congrats!";
+            nextlevelButton.gameObject.SetActive(true);
+            if (levelCounter == 1)
+            {
+                nextlevelButton.gameObject.SetActive(false);
+            }
+
         }
         else
         {
@@ -228,7 +256,20 @@ public class UIManager : MonoBehaviour
         }
         endScoreTitle.text = "Total Score: " + totalScore.ToString();
 
-        Invoke("OpenGameEndPanel", 5);
+        Invoke("OpenGameEndPanel", 4);
+    }
+
+    public void OnclickNextLevelButton()
+    {
+        Time.timeScale = 1;
+        SetActivePanel(GamePanel.name);
+        levelCounter++;
+        mainObject.GetComponent<PlayerController>().sphere.drag = 0.1f;
+        // Destroy(currentPathObject);
+        currentPlayer.GetComponent<Animator>().SetBool("Victory", false);
+        mainObject.GetComponent<PlayerController>().sphere.transform.position = spawnPointList[levelCounter].position;
+        CreateGameModePath();
+
     }
 
     public void OpenGameEndPanel()
@@ -345,7 +386,7 @@ public class UIManager : MonoBehaviour
         }
 
         currentBoardIndex += whichWay;
-        if (currentBoardIndex >= playerList.Length)
+        if (currentBoardIndex >= boardList.Length)
         {
             currentBoardIndex = 0;
         }

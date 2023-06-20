@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Obstacle : MonoBehaviour
+public class Finish : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("IceFloor"))
+        if (other.CompareTag("Player"))
         {
-            //GetComponent<Rigidbody>().isKinematic = true;
-
+            UIManager.Instance.EndGame(true);
         }
-
     }
 }

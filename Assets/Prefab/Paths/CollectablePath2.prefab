@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3389996353120323598
+--- !u!1 &64938435014123481
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,56 +8,56 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3389996353120323597}
-  - component: {fileID: 3389996353120323596}
-  - component: {fileID: 3389996353120323599}
+  - component: {fileID: 64938435014123482}
+  - component: {fileID: 64938435014123483}
+  - component: {fileID: 64938435014123480}
   m_Layer: 0
-  m_Name: CollectablePath
+  m_Name: CollectablePath2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3389996353120323597
+--- !u!4 &64938435014123482
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
+  m_GameObject: {fileID: 64938435014123481}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2351.3, y: 1313.4, z: 1440.4}
-  m_LocalScale: {x: 10.289282, y: 10.289282, z: 10.289282}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2.57, y: 2.57, z: 2.57}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3389996353120323596
+--- !u!114 &64938435014123483
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
+  m_GameObject: {fileID: 64938435014123481}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d12b1fe1b42884d7692049d7f6f79ee9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathCreator: {fileID: 3389996353120323599}
+  pathCreator: {fileID: 64938435014123480}
   autoUpdate: 1
   prefab:
   - {fileID: 818445521969626098, guid: 90bb84b6e766736429ec26b72be2aa26, type: 3}
   holder: {fileID: 0}
-  spacing: 5
---- !u!114 &3389996353120323599
+  spacing: 15
+--- !u!114 &64938435014123480
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3389996353120323598}
+  m_GameObject: {fileID: 64938435014123481}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e5ac92bc18f545cc84cd886ece82b4d, type: 3}
@@ -66,10 +66,16 @@ MonoBehaviour:
   editorData:
     _bezierPath:
       points:
-      - {x: -9.688575, y: 0.074113354, z: 2.8223462}
-      - {x: -9.640194, y: -0.51653963, z: 10.557125}
-      - {x: 80.25901, y: -59.31568, z: 58.41491}
-      - {x: 139.77853, y: -83.54062, z: 99.67274}
+      - {x: -39.933525, y: -9.349961, z: 24.422186}
+      - {x: -45.670258, y: -8.459045, z: 31.10271}
+      - {x: -10.393073, y: -46.167282, z: 88.204346}
+      - {x: 8.962811, y: -55.212597, z: 106.44603}
+      - {x: 43.16397, y: -71.19535, z: 138.67844}
+      - {x: 113.28002, y: -125.473274, z: 207.99477}
+      - {x: 140.55803, y: -126.01065, z: 185.11627}
+      - {x: 160.32507, y: -126.40006, z: 168.53735}
+      - {x: 380.57715, y: -214.40842, z: 201.84494}
+      - {x: 390.0787, y: -224.04659, z: 245.10594}
       isClosed: 0
       space: 0
       controlMode: 0
@@ -79,6 +85,8 @@ MonoBehaviour:
         m_Center: {x: 0, y: 0, z: 0}
         m_Extent: {x: 0, y: 0, z: 0}
       perAnchorNormalsAngle:
+      - 0
+      - 0
       - 0
       - 0
       globalNormalsAngle: 90
