@@ -6,6 +6,7 @@ public class BreakState : PlayerState
 {
     Transform beforeBreak;
     float RotationAmount = 0;
+    float RotationWay = 1;
 
     public BreakState(PlayerController sm) : base(sm)
     {
@@ -20,25 +21,46 @@ public class BreakState : PlayerState
     // Update is called once per frame
     public override void OnUpdate()
     {
+
         if (!controller.isBreaking && RotationAmount <= 0)
         {
-            // Start Move
+            // Change to MovementState
             controller.SetState(controller.movementState);
         }
         else if (!controller.isBreaking && RotationAmount > 0)
         {
             // Undo Rotate
-            Vector3 rotation = new Vector3(0.0f, -90 * Time.deltaTime, 0.0f);
+            Vector3 rotation = new Vector3(0.0f, -90 * Time.deltaTime * RotationWay, 0.0f);
             controller.boardModel.Rotate(rotation);
             RotationAmount = RotationAmount - (90 * Time.deltaTime);
             controller.FixBoardYRotationOnGround();
         }
         else if (controller.isBreaking && RotationAmount <= 90)
         {
+            if (controller.isBreaking && RotationAmount <= 0)
+            {
+                // Start Break
+                if (controller.hInput < 0) {
+                    RotationWay = -1;
+                }
+                else
+                {
+                    RotationWay = 1;
+                }
+
+            }
             // Rotate For Break
-            Vector3 rotation = new Vector3(0.0f, 90 * Time.deltaTime, 0.0f);
+            Vector3 rotation = new Vector3(0.0f, 90 * Time.deltaTime * RotationWay, 0.0f);
             controller.boardModel.Rotate(rotation);
             RotationAmount = RotationAmount + (90 * Time.deltaTime);
+            controller.FixBoardYRotationOnGround();
+        }
+        else if (!controller.isBreaking && RotationAmount > 0)
+        {
+            //Undo Rotate
+            Vector3 rotation = new Vector3(0.0f, -90 * Time.deltaTime, 0.0f);
+            controller.boardModel.Rotate(rotation);
+            RotationAmount = RotationAmount - (90 * Time.deltaTime);
             controller.FixBoardYRotationOnGround();
         }
 
