@@ -7,6 +7,5 @@
 * Trick combinations
 * Animations
 * Audios
-* Snow Track Shader
+* Snow Track Particle
 * Map Design
-* Android build
