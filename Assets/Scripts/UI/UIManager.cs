@@ -117,12 +117,12 @@ public class UIManager : MonoBehaviour
         pauseSettingsButton.onClick.AddListener(OnClickSettingsButton);
         exitButton.onClick.AddListener(OnClickExitButton);
         playButton.onClick.AddListener(OnClickPlayButton);
-        menuButton.onClick.AddListener(OnClickMenuButton);
         pauseButton.onClick.AddListener(OnClickPauseButton);
         continueButton.onClick.AddListener(OnClickContinueButton);
         backButtonPreGame.onClick.AddListener(OnClickBackButton);
         backButtonSettings.onClick.AddListener(OnClickBackButton);
         gameEndRestartButton.onClick.AddListener(OnClickResetScene);
+        menuButton.onClick.AddListener(OnClickResetScene);
         nextlevelButton.onClick.AddListener(OnclickNextLevelButton);
     }
 
