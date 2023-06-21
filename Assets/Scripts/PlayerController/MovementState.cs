@@ -43,7 +43,7 @@ public class MovementState : PlayerState
 
     public override void OnFixedUpdate()
     {
-        
+
         currentDirection = boardDirection.normalized;
         controller.rightVFX.SetActive(false);
         controller.sphere.AddForce(200 * Time.fixedDeltaTime * -controller.boardModel.up, ForceMode.Acceleration);
@@ -55,7 +55,8 @@ public class MovementState : PlayerState
 
         // Velocity update for easy rotation
         float y = controller.sphere.velocity.y;
-        Vector3 newVelocity = currentDirection * controller.sphere.velocity.magnitude;
+        Vector3 velocityDirection = controller.sphere.velocity.normalized;
+        Vector3 newVelocity = Vector3.Lerp(currentDirection, velocityDirection, 50f * Time.deltaTime) * controller.sphere.velocity.magnitude;
         newVelocity.y = y;
         controller.sphere.velocity = newVelocity;
 

@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
         jumpState = new JumpState(this);
         breakState = new BreakState(this);
         animator = playerModel.gameObject.GetComponent<Animator>();
-        tailVFX = Instantiate(tailVFX, boardFrontHit1.position, Quaternion.Euler(-90, 0 , 0), boardFrontHit1);
+        tailVFX = Instantiate(tailVFX, boardFrontHit1.position, Quaternion.Euler(-90, 0, 0), boardFrontHit1);
         SetState(movementState);
     }
 
@@ -158,7 +158,7 @@ public class PlayerController : MonoBehaviour
 
     public void FixBoardYRotationOnGround()
     {
-        float rotationSpeed = 100f;
+        float rotationSpeed = 1000f;
         RaycastHit hit1;
         RaycastHit hit2;
         Quaternion targetRotation;

@@ -209,7 +209,7 @@ public class UIManager : MonoBehaviour
 
     public void CreateGameModePath()
     {
-        
+
         if (currentPathObject != null)
         {
             Destroy(currentPathObject);
@@ -227,14 +227,21 @@ public class UIManager : MonoBehaviour
             currentPathObject = Instantiate(obstaclePaths[levelCounter]);
             medalIconUI.gameObject.SetActive(false);
         }
+        else if (mode == GameModes.Freestyle)
+        {
+            medalIconUI.gameObject.SetActive(false);
+        }
         else
         {
             Debug.LogError("This mode not implemented yet: " + mode.ToString());
             //currentPathObject = Instantiate(gameModePaths[2]);
         }
-        PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
-        pathPlacer.holder = spawnHolder;
-        pathPlacer.Generate();
+        if (currentPathObject != null)
+        {
+            PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
+            pathPlacer.holder = spawnHolder;
+            pathPlacer.Generate();
+        }
     }
 
     public void EndGame(bool isWon)

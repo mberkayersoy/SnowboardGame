@@ -16,6 +16,7 @@ public class JumpState : PlayerState
         if (controller.Grounded)
         {
             GetTotalRotation();
+            controller.animator.SetBool("onJumpState", false);
             controller.SetState(controller.movementState);
             totalRotation = 0;
         }
@@ -29,7 +30,7 @@ public class JumpState : PlayerState
             {
                 float rotationAmount = controller.hInput * rotateSpeed * Time.deltaTime;
                 controller.boardModel.Rotate(new Vector3(0, controller.hInput, 0) * rotateSpeed * Time.deltaTime);
-                totalRotation += Mathf.Abs(rotationAmount); // Toplam rotasyon miktarýný güncelle
+                totalRotation += Mathf.Abs(rotationAmount); // Toplam rotasyon miktarï¿½nï¿½ gï¿½ncelle
             }
             //else if (controller.vInput != 0)
             //{
@@ -39,11 +40,13 @@ public class JumpState : PlayerState
             //    {
             //        controller.boardModel.Rotate(new Vector3(controller.vInput, controller.hInput, 0) * rotateSpeed * Time.deltaTime);
             //    }
+
+            controller.animator.SetBool("onJumpState", true);
         }
 
     }
 
-    // TotalRotation deðiþkenini dýþarý aktarmak için bir yöntem
+    // TotalRotation deï¿½iï¿½kenini dï¿½ï¿½arï¿½ aktarmak iï¿½in bir yï¿½ntem
     public float GetTotalRotation()
     {
         Debug.Log("total: " + totalRotation);
