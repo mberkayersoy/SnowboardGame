@@ -42,7 +42,9 @@ public class UIManager : MonoBehaviour
     public Button[] gameModes;
     public GameObject[] collectiblePaths;
     public GameObject[] obstaclePaths;
+    public GameObject[] freestylePaths;
     public GameObject spawnHolder;
+    public GameModes PlayingMode;
 
     private Button selectedMode;
 
@@ -220,27 +222,33 @@ public class UIManager : MonoBehaviour
         {
             currentPathObject = Instantiate(collectiblePaths[levelCounter]);
             medalIconUI.gameObject.SetActive(true);
+            PlayingMode = GameModes.Collactable;
 
         }
         else if (mode == GameModes.Obstacle)
         {
             currentPathObject = Instantiate(obstaclePaths[levelCounter]);
             medalIconUI.gameObject.SetActive(false);
+            PlayingMode = GameModes.Obstacle;
         }
         else if (mode == GameModes.Freestyle)
         {
             medalIconUI.gameObject.SetActive(false);
+            PlayingMode = GameModes.Freestyle;
+            freestylePaths[levelCounter].SetActive(true);
+
         }
         else
         {
             Debug.LogError("This mode not implemented yet: " + mode.ToString());
-            //currentPathObject = Instantiate(gameModePaths[2]);
+
         }
         if (currentPathObject != null)
         {
             PathCreation.Examples.PathPlacer pathPlacer = currentPathObject.GetComponent<PathCreation.Examples.PathPlacer>();
             pathPlacer.holder = spawnHolder;
             pathPlacer.Generate();
+
         }
     }
 

@@ -50,6 +50,11 @@ public class JumpState : PlayerState
     public float GetTotalRotation()
     {
         Debug.Log("total: " + totalRotation);
+        if(UIManager.Instance.PlayingMode == GameModes.Freestyle)
+        {
+           UIManager.Instance.UpdateScore((int)totalRotation);
+        }
+
         return totalRotation;
     }
 }

@@ -56,7 +56,7 @@ public class MovementState : PlayerState
         // Velocity update for easy rotation
         float y = controller.sphere.velocity.y;
         Vector3 velocityDirection = controller.sphere.velocity.normalized;
-        Vector3 newVelocity = Vector3.Lerp(currentDirection, velocityDirection, 50f * Time.deltaTime) * controller.sphere.velocity.magnitude;
+        Vector3 newVelocity = Vector3.Lerp(currentDirection, velocityDirection, 30f * Time.deltaTime) * controller.sphere.velocity.magnitude;
         newVelocity.y = y;
         controller.sphere.velocity = newVelocity;
 

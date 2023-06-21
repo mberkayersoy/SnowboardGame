@@ -57,7 +57,7 @@ MonoBehaviour:
   boardTailHit2: {fileID: 0}
   boardRight: {fileID: 0}
   boardLeft: {fileID: 0}
-  jumpStrength: 13
+  jumpStrength: 6
   acceleration: 800
   deceleration: 0.1
   maxSpeed: 45
