@@ -5,10 +5,7 @@
 4. Added basic animations to Snowboarder.
 5. If the snowboarder is not on the ground and there is no input, the snowboard is set to automatically correct itself.
 6. There are 3 different game modes in the game and there are 2 different levels for each mode.
-7. These mods are:
-* Collect Medals Mode.
-* Slalom Mode (With Obstacles)
-* Big Air Mode (FreeStyle Mode)
+7. These mods are: Collect Medals Mode, Slalom Mode (With Obstacles), Big Air Mode (FreeStyle Mode)
 ![pla](https://github.com/mberkayersoy/SnowboardGame/assets/76611569/77b3425f-fe14-4d5e-ac8d-c43e37f3faa4)
 
 ![asdas](https://github.com/mberkayersoy/SnowboardGame/assets/76611569/f94b3362-a5b8-4786-8d3b-682cb66f23a7)
